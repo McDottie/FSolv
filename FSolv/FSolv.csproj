@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4F32E8BA-5DBC-4984-95DD-1DFEC4A3E76E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FSolv</RootNamespace>
+    <AssemblyName>FSolv</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\FSolv.csprojAssemblyReference.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="concrete\Context.cs" />
+    <Compile Include="concrete\ContribuinteMapper.cs" />
+    <Compile Include="concrete\ContribuinteRepository.cs" />
+    <Compile Include="concrete\FaturaMapper.cs" />
+    <Compile Include="concrete\FaturaRepository.cs" />
+    <Compile Include="concrete\ItemMapper.cs" />
+    <Compile Include="concrete\ItemRepository.cs" />
+    <Compile Include="concrete\NotaCreditoMapper.cs" />
+    <Compile Include="concrete\NotaCreditoRepository.cs" />
+    <Compile Include="concrete\ProductMapper.cs" />
+    <Compile Include="concrete\ProductRepository.cs" />
+    <Compile Include="dal\IContext.cs" />
+    <Compile Include="dal\IContribuinteRepository.cs" />
+    <Compile Include="dal\IFaturaRepository.cs" />
+    <Compile Include="dal\IItemRepository.cs" />
+    <Compile Include="dal\INotaCreditoRepository.cs" />
+    <Compile Include="dal\IProductRepository.cs" />
+    <Compile Include="dal\IRepository.cs" />
+    <Compile Include="mapper\AbstracMapper.cs" />
+    <Compile Include="mapper\FaturaProxy.cs" />
+    <Compile Include="mapper\IContribuinteMapper.cs" />
+    <Compile Include="mapper\IFaturaMapper.cs" />
+    <Compile Include="mapper\IItemMapper.cs" />
+    <Compile Include="mapper\IMapper.cs" />
+    <Compile Include="mapper\INotaCreditoMapper.cs" />
+    <Compile Include="mapper\IProductMapper.cs" />
+    <Compile Include="mapper\ItemProxy.cs" />
+    <Compile Include="model\Contribuinte.cs" />
+    <Compile Include="model\Fatura.cs" />
+    <Compile Include="model\Item.cs" />
+    <Compile Include="model\NotaCredito.cs" />
+    <Compile Include="model\Product.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+    <Folder Include="bin\Release\" />
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

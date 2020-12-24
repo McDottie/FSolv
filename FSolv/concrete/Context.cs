@@ -23,19 +23,26 @@ namespace FSolv.concrete
         private string connectionString;
         private SqlConnection con = null;
 
-        private ContribuinteRepository _countryRepository;
-        private FaturaRepository _courseRepository;
-        private ItemRepository _studentRepository;
+        private ContribuinteRepository _contribuinteRepository;
+        private FaturaRepository _faturaRepository;
+        private ItemRepository _itemRepository;
+        private NotaCreditoRepository _notaCreditoRepository;
+        private ProductRepository _productRepository;
 
-      
+
+
+
         public Context(string cs)
         {
             connectionString = cs;
-            _countryRepository = new ContribuinteRepository(this);
-            _courseRepository = new FaturaRepository(this);
-            _studentRepository = new ItemRepository(this);
+            _contribuinteRepository = new ContribuinteRepository(this);
+            _faturaRepository = new FaturaRepository(this);
+            _itemRepository = new ItemRepository(this);
+            _notaCreditoRepository = new NotaCreditoRepository(this);
+            _productRepository = new ProductRepository(this);
+
         }
-        
+
         public void Open()
         {
             if (con == null)
@@ -71,30 +78,74 @@ namespace FSolv.concrete
             }
         }
 
-        public ContribuinteRepository Countries
+        void IContext.Open()
+        {
+            throw new NotImplementedException();
+        }
+
+        SqlCommand IContext.createCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IContext.EnlistTransaction()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDisposable.Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ContribuinteRepository Countribuinte
         {
             get
             {
-                return _countryRepository;
+                return _contribuinteRepository;
             }
         }
 
-        public FaturaRepository Courses
+        public FaturaRepository Fatura
         {
             get
             {
-                return _courseRepository;
+                return _faturaRepository;
             }
         }
 
-        public ItemRepository Students
+        public ItemRepository Item
         {
             get
             {
-                return _studentRepository;
+                return _itemRepository;
             }
         }
 
+        public NotaCreditoRepository NotaCredito
+        {
+            get
+            {
+                return _notaCreditoRepository;
+            }
+        }
 
+        public ProductRepository Produto
+        {
+            get
+            {
+                return _productRepository;
+            }
+        }
+
+        ContribuinteRepository IContext.Contribuinte => Countribuinte;
+
+        FaturaRepository IContext.Fatura => Fatura;
+
+        ItemRepository IContext.Item => Item;
+
+        NotaCreditoRepository IContext.NotaCredito => NotaCredito;
+
+        ProductRepository IContext.Produto => Produto;
     }
 }

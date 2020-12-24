@@ -25,7 +25,7 @@ namespace FSolv.mapper.concrete
     class FaturaMapper : AbstracMapper<Fatura, int?, List<Fatura>>, IFaturaMapper
     {
         #region HELPER METHODS  
-        internal List<Item> LoadStudents(Fatura c)
+        internal List<Item> LoadItems(Fatura c)
         {
             List<Item> lst = new List<Item>();
 
@@ -43,8 +43,12 @@ namespace FSolv.mapper.concrete
             return lst;
         }
 
-        #endregion
-        public FaturaMapper(IContext ctx) : base(ctx)
+        internal Contribuinte LoadContribuinte(Fatura c)
+        {
+            throw new NotImplementedException();
+        }
+            #endregion
+            public FaturaMapper(IContext ctx) : base(ctx)
         {
         }
 

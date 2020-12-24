@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FSolv.concrete
 {
-    class ProductRepository : IProductRepository
+    public class ProductRepository : IProductRepository
     {
         private IContext context;
         public ProductRepository(IContext ctx)

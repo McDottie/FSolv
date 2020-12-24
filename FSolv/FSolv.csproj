@@ -38,8 +38,10 @@
     <None Include="obj\Debug\FSolv.csprojAssemblyReference.cache" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="concrete\Context.cs" />

@@ -21,45 +21,25 @@ using FSolv.model;
 using FSolv.mapper.interfaces;
 using FSolv;
 
-namespace FSolvlv.mapper.concrete
+namespace FSolv.mapper.concrete
 {
 
     class ItemMapper : AbstracMapper<Item, int?, List<Item>>, IItemMapper
     {
         #region HELPER METHODS  
-        internal List<Fatura> LoadCourses(Item s)
+        internal Fatura LoadFatura(Item s)
         {
-            List<Fatura> lst = new List<Fatura>();
-
-            FaturaMapper cm = new FaturaMapper(context);
-            List<IDataParameter> parameters = new List<IDataParameter>();
-            parameters.Add(new SqlParameter("@id", s.Number));
-            using (IDataReader rd = ExecuteReader("select courseid from studentcourse where studentId=@id", parameters))
-            {
-                while (rd.Read())
-                {
-                    int key = rd.GetInt32(0);
-                    lst.Add(cm.Read(key));
-                }
-            }
-            return lst;
+            throw new NotImplementedException();
         }
 
-        internal Contribuinte LoadCountry(Item s)
+        internal NotaCredito LoadNotaCredito(Item s)
         {
-            ContribuinteMapper cm = new ContribuinteMapper(context);
-            List<IDataParameter> parameters = new List<IDataParameter>();
-            parameters.Add(new SqlParameter("@id", s.Number));
-            using (IDataReader rd = ExecuteReader("select country from student where studentNumber=@id", parameters))
-            {
-                if (rd.Read())
-                {
-                    int key = rd.GetInt32(0);
-                    return cm.Read(key);
-                }
-            }
-            return null;
+            throw new NotImplementedException();
+        }
 
+        internal Product LoadProduct(Item s)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -21,9 +21,9 @@ namespace FSolv.model
         public int? Id { get; set; }
         public double Desconto { get; set; }
         public int Qnt { get; set; }
-        public Product Product { get; set; }
-        public Fatura Fatura { get; set; }
-        public NotaCredito NotaCredito { get; set; }
+        public virtual Product Product { get; set; }
+        public virtual Fatura Fatura { get; set; }
+        public virtual NotaCredito NotaCredito { get; set; }
 
     }
 }

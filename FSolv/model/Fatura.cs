@@ -24,7 +24,7 @@ namespace FSolv.model
         
         public string State { get; set; }
 
-        public Contribuinte Contribuinte { get; set; }
+        public virtual Contribuinte Contribuinte { get; set; }
 
         public double Iva { get; set; }
         

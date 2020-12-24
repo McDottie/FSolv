@@ -25,7 +25,10 @@ namespace FSolv
         void EnlistTransaction();
 
         ContribuinteRepository Contribuinte { get; }
-        FaturaRepository Courses { get; }
-        ItemRepository Students { get; }
+        FaturaRepository Fatura { get; }
+        ItemRepository Item { get; }
+        NotaCreditoRepository NotaCredito { get; }
+        ProductRepository Produto { get; }
+
     }
 }

@@ -26,26 +26,46 @@ namespace FSolv.mapper.concrete
             context = ctx;
 
             base.Id = c.Id;
-            base.Name = c.Name;
-            base.EnrolledStudents = null;        
+            base.Iva = c.Iva;
+            base.State = c.State;
+            base.DataEmissao = c.DataEmissao;
+            base.Contribuinte = null;
+            base.Items = null;        
         }
-        public override List<Item> EnrolledStudents
+        public override List<Item> Items
         {
             get
             {
-                if (base.EnrolledStudents == null)//lazy load
+                if (base.Items == null)//lazy load
                 {
                     FaturaMapper cm = new FaturaMapper(context);
-                    base.EnrolledStudents=cm.LoadStudents(this);
+                    base.Items = cm.LoadItems(this);
                 }
-                return base.EnrolledStudents;
+                return base.Items;
             }
 
             set
             {
-                base.EnrolledStudents = value;
+                base.Items = value;
             }
         }
 
+        public override Contribuinte Contribuinte
+        {
+            get
+            {
+                if (base.Contribuinte == null)//lazy load
+                {
+                    FaturaMapper cm = new FaturaMapper(context);
+                    base.Contribuinte = cm.LoadContribuinte(this);
+                }
+                return base.Contribuinte;
+            }
+
+            set
+            {
+                base.Contribuinte = value;
+            }
+        }
     }
 }

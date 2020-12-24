@@ -25,49 +25,67 @@ namespace FSolv.mapper.concrete
         
         public ItemProxy(Item s, IContext ctx, int? countryId):base()
         {
-            base.Number = s.Number;
-            base.Name = s.Name;
-            base.Sex = s.Sex;
-            base.DateOfBirth = s.DateOfBirth;
-            base.EnrolledCourses = null;
-            base.HomeCountry = null;
+            base.Desconto = s.Desconto;
+            base.Id = s.Id;
+            base.Fatura= null;
+            base.NotaCredito = null;
+            base.Product = null;
+
             context = ctx;
             this.countryId = countryId;
         }
 
-        public override Contribuinte HomeCountry
+        public override Fatura Fatura
         {
             get
             {
-                if (base.HomeCountry == null) //lazy load
+                if (base.Fatura == null) //lazy load
                 {
                     ItemMapper sm = new ItemMapper(context);
-                    base.HomeCountry = sm.LoadCountry(this);
+                    base.Fatura = sm.LoadFatura(this);
                 }
-                return base.HomeCountry;
+                return base.Fatura;
             }
 
             set
             {
-                base.HomeCountry = value;
+                base.Fatura = value;
             }
         }
 
-        public override List<Fatura> EnrolledCourses
+        public override NotaCredito NotaCredito
         {
             get
             {
-                if (base.EnrolledCourses == null)
+                if (base.NotaCredito == null)
                 {
                     ItemMapper sm = new ItemMapper(context);
-                    base.EnrolledCourses=sm.LoadCourses(this);
+                    base.NotaCredito = sm.LoadNotaCredito(this);
                 }
-                return base.EnrolledCourses;
+                return base.NotaCredito;
             }
 
             set
             {
-                base.EnrolledCourses = value;
+                base.NotaCredito = value;
+            }
+        }
+
+        public override Product Product
+        {
+            get
+            {
+                if (base.Product == null)
+                {
+                    ItemMapper sm = new ItemMapper(context);
+                    base.Product = sm.LoadProduct(this);
+                }
+                return base.Product;
+            }
+
+            set
+            {
+                base.Product = value;
             }
         }
 

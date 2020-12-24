@@ -34,7 +34,7 @@ namespace FSolv
             string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 
             /** TESTAR CONTRIBUINTE*/
-            Console.WriteLine(" TESTAR CONTRIBUINTE");
+            Console.WriteLine("TESTAR CONTRIBUINTE");
 
             using (Context ctx = new Context(connectionString))
             {
@@ -47,12 +47,12 @@ namespace FSolv
                 ContribuinteMapper contribuinteMap = new ContribuinteMapper(ctx);
                 c = contribuinteMap.Create(c);
                 Contribuinte c1 = contribuinteMap.Read(c.Nif);
-                Console.WriteLine("Contribuinte: {0}-{1}", c1.Nif, c1.Name);
+                Console.WriteLine("Contribuinte: {0}-{1}-{2}", c1.Nif, c1.Name, c1.Morada);
 
                 c1.Name = "Jorge";
                 contribuinteMap.Update(c1);
                 c1 = contribuinteMap.Read(c1.Nif);
-                Console.WriteLine("Country: {0}-{1}", c1.Nif, c1.Name);
+                Console.WriteLine("Country: {0}-{1}-{2}", c1.Nif, c1.Name, c1.Morada);
 
                 Contribuinte c2 = new Contribuinte();
                 c2.Name = "Manuel";
@@ -61,25 +61,25 @@ namespace FSolv
                 Console.WriteLine("FindAll");
                 foreach (var contribuinte in ctx.Countries.FindAll())
                 {
-                    Console.WriteLine("Country: {0}-{1}", contribuinte.Nif, contribuinte.Name);
+                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                 }
                 Console.WriteLine("Find");
-                foreach (var country in ctx.Countries.Find(ct => ct.Name.Equals("Portugal")))
+                foreach (var contribuinte in ctx.Countries.Find(ct => ct.Name.Equals("Portugal")))
                 {
-                    Console.WriteLine("Country: {0}-{1}", country.Nif, country.Name);
+                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                 }
 
                 Console.WriteLine("ReadAll");
                 foreach (var contribuinte in contribuinteMap.ReadAll())
                 {
-                    Console.WriteLine("Country: {0}-{1}", contribuinte.Nif, contribuinte.Name);
+                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                     contribuinteMap.Delete(contribuinte);
                 }
 
 
                 foreach (var contribuinte in contribuinteMap.ReadAll())
                 {
-                    Console.WriteLine("Country: {0}-{1}", contribuinte.Nif, contribuinte.Name);
+                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                 }
 
             }

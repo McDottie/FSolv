@@ -30,7 +30,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "delete from Country where countryId=@id";
+                return "delete from TP1.Contribuinte where nif=@id";
             }
         }
 
@@ -38,7 +38,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                 return "INSERT INTO Country (Name) VALUES(@Name); select @id=scope_identity()";
+                 return "INSERT INTO TP1.Contribuinte (name,nif,morada) VALUES(@Name,@Nif,@Morada);";
             }
         }
 
@@ -46,7 +46,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "select countryId,name from Country";
+                return "select name,nif,morada from TP1.Contribuinte";
             }
         }
 
@@ -54,7 +54,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return String.Format("{0} where countryId=@id", SelectAllCommandText); ;
+                return String.Format("{0} where nif=@Nif", SelectAllCommandText); ;
             }
         }
 
@@ -62,43 +62,40 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "update Country set name=@name where countryId=@id";
+                return "update TP1.Contribuinte set morada=@Morada where nif=@Nif";
             }
         }
 
         protected override void DeleteParameters(IDbCommand cmd, Contribuinte e)
         {
 
-            SqlParameter p1 = new SqlParameter("@id", e.Id);
+            SqlParameter p1 = new SqlParameter("@Nif", e.Nif);
             cmd.Parameters.Add(p1);
         }
 
         protected override void InsertParameters(IDbCommand cmd, Contribuinte e)
         {
             SqlParameter p = new SqlParameter("@Name", e.Name);
-            SqlParameter p1 = new SqlParameter("@id", SqlDbType.Int);
-            p1.Direction = ParameterDirection.InputOutput;
-
-            if (e.Id != null)
-                p1.Value = e.Id;
-            else
-                p1.Value = DBNull.Value;
+            SqlParameter p1= new SqlParameter("@Morada", e.Morada);
+            SqlParameter p2 = new SqlParameter("@Nif", e.Morada);
 
             cmd.Parameters.Add(p);
             cmd.Parameters.Add(p1);
+            cmd.Parameters.Add(p2);
+
         }
 
 
         protected override void SelectParameters(IDbCommand cmd, int? k)
         {
-            SqlParameter p1 = new SqlParameter("@id", k);
+            SqlParameter p1 = new SqlParameter("@Nif", k);
             cmd.Parameters.Add(p1);
         }
 
         protected override Contribuinte UpdateEntityID(IDbCommand cmd, Contribuinte e)
         {
-            var param = cmd.Parameters["@id"] as SqlParameter;
-            e.Id = int.Parse(param.Value.ToString());
+            var param = cmd.Parameters["@Nif"] as SqlParameter;
+            e.Nif = int.Parse(param.Value.ToString());
             return e;
         }
 
@@ -110,8 +107,10 @@ namespace FSolv.mapper.concrete
         protected override Contribuinte Map(IDataRecord record)
         {
             Contribuinte c = new Contribuinte();
-            c.Id = record.GetInt32(0);
-            c.Name = record.GetString(1);
+            c.Name = record.GetString(0);
+            c.Nif = record.GetInt32(1);
+            c.Morada = record.GetString(2);
+
             return c;
         }
     }

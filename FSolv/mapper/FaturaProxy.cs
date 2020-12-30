@@ -28,6 +28,7 @@ namespace FSolv.mapper.concrete
             base.Id = c.Id;
             base.Iva = c.Iva;
             base.State = c.State;
+            base.Total = c.Total;
             base.DataEmissao = c.DataEmissao;
             base.Contribuinte = null;
             base.Items = null;        

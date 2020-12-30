@@ -63,6 +63,7 @@
     <Compile Include="dal\IProductRepository.cs" />
     <Compile Include="dal\IRepository.cs" />
     <Compile Include="mapper\AbstracMapper.cs" />
+    <Compile Include="mapper\ContribuinteProxy.cs" />
     <Compile Include="mapper\FaturaProxy.cs" />
     <Compile Include="mapper\IContribuinteMapper.cs" />
     <Compile Include="mapper\IFaturaMapper.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="mapper\INotaCreditoMapper.cs" />
     <Compile Include="mapper\IProductMapper.cs" />
     <Compile Include="mapper\ItemProxy.cs" />
+    <Compile Include="mapper\NotaCreditoProxy.cs" />
     <Compile Include="model\Contribuinte.cs" />
     <Compile Include="model\Fatura.cs" />
     <Compile Include="model\Item.cs" />

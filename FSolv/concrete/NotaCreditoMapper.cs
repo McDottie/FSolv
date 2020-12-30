@@ -9,6 +9,16 @@ namespace FSolv.mapper.concrete
 {
     class NotaCreditoMapper : AbstracMapper<NotaCredito, int?, List<NotaCredito>>, INotaCreditoMapper
     {
+        #region HELPER METHODS 
+        internal List<Item> LoadItems(NotaCreditoProxy notaCreditoProxy)
+        {
+            throw new NotImplementedException();
+        }
+        internal Fatura Loadfatura(NotaCreditoProxy notaCreditoProxy)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
         public NotaCreditoMapper(IContext ctx) : base(ctx)
         {
         }

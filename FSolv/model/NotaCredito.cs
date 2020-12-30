@@ -8,7 +8,7 @@ namespace FSolv.model
     public class NotaCredito
     {
         public int? Id { get; set; }
-        public Fatura Fatura { get; set; }
+        public virtual Fatura Fatura { get; set; }
 
         public DateTime DataEmissao { get; set; }
 

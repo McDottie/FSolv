@@ -49,14 +49,14 @@ namespace FSolv.mapper.concrete
         }
             #endregion
             public FaturaMapper(IContext ctx) : base(ctx)
-        {
-        }
+            {
+            }
 
         protected override string DeleteCommandText
         {
             get
             {
-                return "delete from Course where courseId=@id";
+                return "delete from TP1.Fatura where id=@id";
             }
         }
 
@@ -64,7 +64,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "INSERT INTO Course (Name) VALUES(@Name); select @id = scope_identity()";
+                return "exec TP1.p_criaFactura (@nif, @id)";
             }
         }
 
@@ -72,7 +72,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "select courseId,name from Course";
+                return "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
             }
         }
 
@@ -80,7 +80,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return String.Format("{0}  where courseId=@id", SelectAllCommandText);
+                return String.Format("{0}  where id=@id", SelectAllCommandText);
             }
         }
 
@@ -88,7 +88,7 @@ namespace FSolv.mapper.concrete
         {
             get
             {
-                return "update Course set name=@name where courseId=@id";
+                return "exec TP1.alt_estado_fatura (@id, @estado)";
             }
         }
 
@@ -100,9 +100,9 @@ namespace FSolv.mapper.concrete
         protected override void InsertParameters(IDbCommand cmd, Fatura e)
         {
             SqlParameter p1 = new SqlParameter("@id", SqlDbType.Int);
-            SqlParameter p2 = new SqlParameter("@name", e.Name);
+            SqlParameter p2 = new SqlParameter("@nif", e.Contribuinte.Nif);
 
-            p1.Direction = ParameterDirection.InputOutput;
+            p1.Direction = ParameterDirection.Output;
             if (e.Id != null)
                 p1.Value = e.Id;
             else
@@ -112,12 +112,24 @@ namespace FSolv.mapper.concrete
             cmd.Parameters.Add(p2);
 
         }
+        protected override Fatura UpdateEntityID(IDbCommand cmd, Fatura f)
+        {
+            var param = cmd.Parameters["@id"] as SqlParameter;
+            f.Id = int.Parse(param.Value.ToString());
+            return new FaturaProxy(f, context);
+        }
 
         protected override Fatura Map(IDataRecord record)
         {
             Fatura c = new Fatura();
             c.Id = record.GetInt32(0);
-            c.Name = record.GetString(1);
+            c.DataEmissao = record.GetDateTime(1);
+            c.State = record.GetString(2);
+            c.Iva = record.GetDouble(3);
+            c.Total = record.GetDouble(4);
+            c.Contribuinte = null;
+            c.Items = null;
+
             return new FaturaProxy(c,context);
         }
 
@@ -135,14 +147,6 @@ namespace FSolv.mapper.concrete
         {
             SqlParameter p1 = new SqlParameter("@id", k);
             cmd.Parameters.Add(p1);
-        }
-
-        protected override Fatura UpdateEntityID(IDbCommand cmd, Fatura e)
-        {
-            var param = cmd.Parameters["@id"] as SqlParameter;
-            e.Id = int.Parse(param.Value.ToString());
-            return e;
-
         }
 
         protected override void UpdateParameters(IDbCommand command, Fatura e)

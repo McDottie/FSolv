@@ -22,10 +22,14 @@ namespace FSolv.mapper.concrete
 {
     class ContribuinteMapper : AbstracMapper<Contribuinte, int?, List<Contribuinte>>, IContribuinteMapper
     {
-        public ContribuinteMapper(IContext ctx) : base(ctx)
+        #region HELPER METHOD 
+        internal List<Fatura> LoadFaturas(ContribuinteProxy contribuinteProxy)
         {
+            throw new NotImplementedException();
         }
+        #endregion
 
+        public IContext ctx;
         protected override string DeleteCommandText
         {
             get
@@ -66,6 +70,11 @@ namespace FSolv.mapper.concrete
             }
         }
 
+        public ContribuinteMapper(IContext ctx) : base(ctx)
+        {
+            this.ctx = ctx;
+        }
+
         protected override void DeleteParameters(IDbCommand cmd, Contribuinte e)
         {
 
@@ -92,11 +101,11 @@ namespace FSolv.mapper.concrete
             cmd.Parameters.Add(p1);
         }
 
-        protected override Contribuinte UpdateEntityID(IDbCommand cmd, Contribuinte e)
+        protected override Contribuinte UpdateEntityID(IDbCommand cmd, Contribuinte c)
         {
             var param = cmd.Parameters["@Nif"] as SqlParameter;
-            e.Nif = int.Parse(param.Value.ToString());
-            return e;
+            c.Nif = int.Parse(param.Value.ToString());
+            return new ContribuinteProxy(c,ctx);
         }
 
         protected override void UpdateParameters(IDbCommand cmd, Contribuinte e)
@@ -111,7 +120,18 @@ namespace FSolv.mapper.concrete
             c.Nif = record.GetInt32(1);
             c.Morada = record.GetString(2);
 
-            return c;
+            return new ContribuinteProxy(c,ctx);
+        }
+
+
+        public override Contribuinte Create(Contribuinte entity)
+        {
+            return new ContribuinteProxy(base.Create(entity), context);
+        }
+
+        public override Contribuinte Update(Contribuinte entity)
+        {
+            return new ContribuinteProxy(base.Update(entity), context);
         }
     }
 }

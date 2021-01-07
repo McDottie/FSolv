@@ -17,10 +17,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System;
+using FSolv.helper;
 
 namespace FSolv.mapper.concrete
 {
-    class ContribuinteMapper : AbstracMapper<Contribuinte, int?, List<Contribuinte>>, IContribuinteMapper
+    class ContribuinteMapper : IContribuinteMapper
     {
         #region HELPER METHOD 
         internal List<Fatura> LoadFaturas(ContribuinteProxy contribuinteProxy)
@@ -29,109 +30,87 @@ namespace FSolv.mapper.concrete
         }
         #endregion
 
-        public IContext ctx;
-        protected override string DeleteCommandText
+        private readonly IContext _ctx;
+        private const string INS_CMD = "INSERT INTO TP1.Contribuinte (name,nif,morada) VALUES(@Name,@Nif,@Morada)";
+        private const string SEL_ALL_CMD = "select name,nif,morada from TP1.Contribuinte";
+        private const string SEL_CMD =  SEL_ALL_CMD + "where nif=@Nif";
+        private const string UPD_CMD = "update TP1.Contribuinte set morada=@Morada where nif=@Nif";
+        private const string DEL_CMD = "delete from TP1.Contribuinte where nif=@id";
+
+
+        public ContribuinteMapper(IContext ctx)
         {
-            get
+            this._ctx = ctx;
+        }
+
+        public IContribuinte Create(IContribuinte entity)
+        {
+            SqlParameter p1 = new SqlParameter("@Morada", entity.Morada);
+            SqlParameter p2 = new SqlParameter("@Nif", entity.Nif);
+
+            entity.Nif = SQLMapperHelper.ExecuteScalar<int>(_ctx.Connection,
+                                                            INS_CMD,
+                                                            new[] { p1, p2 });
+            return new ContribuinteProxy(entity,_ctx);
+        }
+
+        public IContribuinte Update(IContribuinte entity)
+        {
+            SqlParameter p = new SqlParameter("@Name", entity.Name);
+            SqlParameter p1 = new SqlParameter("@Morada", entity.Morada);
+            SqlParameter p2 = new SqlParameter("@Nif", entity.Morada);
+
+            int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,UPD_CMD,new[] { p, p1, p2 });
+            return i != 1 ? null : new ContribuinteProxy(entity, _ctx);
+        }
+
+        public IContribuinte Read(int? id)
+        {
+            SqlParameter p = new SqlParameter("@Nif", id);
+
+            Mapper<IContribuinte> map = (value) =>
             {
-                return "delete from TP1.Contribuinte where nif=@id";
-            }
+                Contribuinte entity = new Contribuinte();
+                entity.Name = value.GetString(0);
+                entity.Nif = id;
+                return new ContribuinteProxy(entity, _ctx);
+            };
+
+            return SQLMapperHelper.ExecuteMapSingle<IContribuinte>(_ctx.Connection,
+                                                    SEL_CMD,
+                                                    new[] { p },
+                                                    map
+                                                    );
+
         }
 
-        protected override string InsertCommandText
+        public List<IContribuinte> ReadAll()
         {
-            get
+            Mapper<IContribuinte> map = (value) =>
             {
-                 return "INSERT INTO TP1.Contribuinte (name,nif,morada) VALUES(@Name,@Nif,@Morada);";
-            }
+                Contribuinte entity = new Contribuinte();
+                entity.Name = value.GetString(0);
+                entity.Nif = value.GetInt32(1);
+                entity.Morada = value.GetString(2);
+
+                return new ContribuinteProxy(entity, _ctx); ;
+            };
+
+            return SQLMapperHelper.ExecuteMapSet<IContribuinte, List<IContribuinte>>(_ctx.Connection,
+                                                    SEL_ALL_CMD,
+                                                    new IDbDataParameter[] { },
+                                                    map
+                                                    );
         }
 
-        protected override string SelectAllCommandText
+        public IContribuinte Delete(IContribuinte entity)
         {
-            get
-            {
-                return "select name,nif,morada from TP1.Contribuinte";
-            }
+            SqlParameter p = new SqlParameter("@Nif", entity.Nif);
+
+            int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, DEL_CMD, new[] { p });
+            return i != 1 ? null : new ContribuinteProxy(entity, _ctx);
         }
 
-        protected override string SelectCommandText
-        {
-            get
-            {
-                return String.Format("{0} where nif=@Nif", SelectAllCommandText); ;
-            }
-        }
-
-        protected override string UpdateCommandText
-        {
-            get
-            {
-                return "update TP1.Contribuinte set morada=@Morada where nif=@Nif";
-            }
-        }
-
-        public ContribuinteMapper(IContext ctx) : base(ctx)
-        {
-            this.ctx = ctx;
-        }
-
-        protected override void DeleteParameters(IDbCommand cmd, Contribuinte e)
-        {
-
-            SqlParameter p1 = new SqlParameter("@Nif", e.Nif);
-            cmd.Parameters.Add(p1);
-        }
-
-        protected override void InsertParameters(IDbCommand cmd, Contribuinte e)
-        {
-            SqlParameter p = new SqlParameter("@Name", e.Name);
-            SqlParameter p1= new SqlParameter("@Morada", e.Morada);
-            SqlParameter p2 = new SqlParameter("@Nif", e.Morada);
-
-            cmd.Parameters.Add(p);
-            cmd.Parameters.Add(p1);
-            cmd.Parameters.Add(p2);
-
-        }
-
-
-        protected override void SelectParameters(IDbCommand cmd, int? k)
-        {
-            SqlParameter p1 = new SqlParameter("@Nif", k);
-            cmd.Parameters.Add(p1);
-        }
-
-        protected override Contribuinte UpdateEntityID(IDbCommand cmd, Contribuinte c)
-        {
-            var param = cmd.Parameters["@Nif"] as SqlParameter;
-            c.Nif = int.Parse(param.Value.ToString());
-            return new ContribuinteProxy(c,ctx);
-        }
-
-        protected override void UpdateParameters(IDbCommand cmd, Contribuinte e)
-        {
-            InsertParameters(cmd, e);
-        }
-
-        protected override Contribuinte Map(IDataRecord record)
-        {
-            Contribuinte c = new Contribuinte();
-            c.Name = record.GetString(0);
-            c.Nif = record.GetInt32(1);
-            c.Morada = record.GetString(2);
-
-            return new ContribuinteProxy(c,ctx);
-        }
-
-
-        public override Contribuinte Create(Contribuinte entity)
-        {
-            return new ContribuinteProxy(base.Create(entity), context);
-        }
-
-        public override Contribuinte Update(Contribuinte entity)
-        {
-            return new ContribuinteProxy(base.Update(entity), context);
-        }
     }
+
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FSolv.model
 {
-    public class Product
+    public class Product : IProduto
     {
         public int? Sku { get; set; }
         public double Valor { get; set; }

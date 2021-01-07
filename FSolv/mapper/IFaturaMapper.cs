@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace FSolv.mapper.interfaces
 {
-    interface IFaturaMapper : IMapper<Fatura, int?, List<Fatura>>
+    interface IFaturaMapper : IMapper<IFatura, string, List<IFatura>>
     {
     }
 }

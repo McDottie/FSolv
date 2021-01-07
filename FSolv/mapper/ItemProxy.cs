@@ -21,9 +21,8 @@ namespace FSolv.mapper.concrete
     class ItemProxy : Item
     {
         private IContext context;
-        private int? countryId;
         
-        public ItemProxy(Item s, IContext ctx, int? countryId):base()
+        public ItemProxy(IItem s, IContext ctx):base()
         {
             base.Desconto = s.Desconto;
             base.Id = s.Id;
@@ -32,7 +31,6 @@ namespace FSolv.mapper.concrete
             base.Product = null;
 
             context = ctx;
-            this.countryId = countryId;
         }
 
         public override Fatura Fatura

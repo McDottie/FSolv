@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace FSolv.mapper.interfaces
 {
-    interface IContribuinteMapper : IMapper<Contribuinte, int?, List<Contribuinte>>
+    interface IContribuinteMapper : IMapper<IContribuinte, int?, List<IContribuinte>>
     {
     }
 }

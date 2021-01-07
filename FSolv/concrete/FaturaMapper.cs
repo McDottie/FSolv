@@ -18,140 +18,157 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System;
+using FSolv.helper;
 
 namespace FSolv.mapper.concrete
 {
 
-    class FaturaMapper : AbstracMapper<Fatura, int?, List<Fatura>>, IFaturaMapper
+    class FaturaMapper : IFaturaMapper
     {
         #region HELPER METHODS  
-        internal List<Item> LoadItems(Fatura c)
+        internal List<IItem> LoadItems(Fatura entity)
         {
-            List<Item> lst = new List<Item>();
-
-            ItemMapper sm = new ItemMapper(context);
-            List<IDataParameter> parameters = new List<IDataParameter>();
-            parameters.Add(new SqlParameter("@id", c.Id));
-            using (IDataReader rd = ExecuteReader("select studentId from studentcourse where courseid=@id", parameters))
+            Mapper<IItem> map = (value) =>
             {
-                while (rd.Read())
-                {
-                    int key = rd.GetInt32(0);
-                    lst.Add(sm.Read(key));
-                }
-            }
+                Item i = new Item();
+                i.Id = value.GetInt32(0);
+                i.Qnt = value.GetInt32(1);
+                i.Desconto = value.GetDouble(2);
+
+                return new ItemProxy(i, _ctx);
+            };
+
+            List<IItem> lst;
+
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            lst = SQLMapperHelper.ExecuteMapSet<IItem,List<IItem>> (_ctx.Connection,
+                                  "select id, quantidade, desconto, cod_prod from TP1.Item " +
+                                  "join TP1.Fatura_item on Item.id = Fatura_item.cod_item " +
+                                  "where id_fatura = @id",
+                                    new[] { p }, map);
+            
             return lst;
         }
 
-        internal Contribuinte LoadContribuinte(Fatura c)
+        internal IContribuinte LoadContribuinte(Fatura entity)
         {
-            throw new NotImplementedException();
-        }
-            #endregion
-            public FaturaMapper(IContext ctx) : base(ctx)
+            Mapper<IContribuinte> map = (value) =>
             {
-            }
+                Contribuinte entity = new Contribuinte();
+                entity.Name = value.GetString(0);
+                entity.Nif = id;
+                return new ContribuinteProxy(entity, _ctx);
+            };
 
-        protected override string DeleteCommandText
+            IContribuinte c;
+
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            c = SQLMapperHelper.ExecuteMapSingle<IContribuinte>(_ctx.Connection,
+                                  "select id, quantidade, desconto, cod_prod from TP1.Item " +
+                                  "join TP1.Fatura_item on Item.id = Fatura_item.cod_item " +
+                                  "where id_fatura = @id",
+                                    new[] { p }, map);
+
+            return c;
+        }
+        #endregion
+
+        private readonly IContext _ctx;
+        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, @id)";
+        private const string SEL_ALL_CMD = "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
+        private const string SEL_CMD = SEL_ALL_CMD + "where id=@id";
+        private const string UPD_CMD = "exec TP1.alt_estado_fatura (@id, @estado)";
+        private const string DEL_CMD = "delete from TP1.Fatura where id=@id";
+
+        public FaturaMapper(IContext ctx)
         {
-            get
-            {
-                return "delete from TP1.Fatura where id=@id";
-            }
+            _ctx = ctx;
+
         }
 
-        protected override string InsertCommandText
+        public IFatura Create(IFatura entity)
         {
-            get
-            {
-                return "exec TP1.p_criaFactura (@nif, @id)";
-            }
-        }
-
-        protected override string SelectAllCommandText
-        {
-            get
-            {
-                return "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
-            }
-        }
-
-        protected override string SelectCommandText
-        {
-            get
-            {
-                return String.Format("{0}  where id=@id", SelectAllCommandText);
-            }
-        }
-
-        protected override string UpdateCommandText
-        {
-            get
-            {
-                return "exec TP1.alt_estado_fatura (@id, @estado)";
-            }
-        }
-
-        protected override void DeleteParameters(IDbCommand cmd, Fatura e)
-        {
-            SelectParameters(cmd, e.Id);
-        }
-
-        protected override void InsertParameters(IDbCommand cmd, Fatura e)
-        {
-            SqlParameter p1 = new SqlParameter("@id", SqlDbType.Int);
-            SqlParameter p2 = new SqlParameter("@nif", e.Contribuinte.Nif);
+            SqlParameter p1 = new SqlParameter("@id", SqlDbType.VarChar);
+            SqlParameter p2 = new SqlParameter("@nif", entity.Contribuinte.Nif);
 
             p1.Direction = ParameterDirection.Output;
-            if (e.Id != null)
-                p1.Value = e.Id;
+            if (entity.Id != null)
+                p1.Value = entity.Id;
             else
                 p1.Value = DBNull.Value;
 
-            cmd.Parameters.Add(p1);
-            cmd.Parameters.Add(p2);
-
-        }
-        protected override Fatura UpdateEntityID(IDbCommand cmd, Fatura f)
-        {
-            var param = cmd.Parameters["@id"] as SqlParameter;
-            f.Id = int.Parse(param.Value.ToString());
-            return new FaturaProxy(f, context);
+            entity.Id = SQLMapperHelper.ExecuteScalar<string>(_ctx.Connection,
+                                                            INS_CMD,
+                                                            new[] { p1, p2 });
+            return new FaturaProxy(entity, _ctx);
         }
 
-        protected override Fatura Map(IDataRecord record)
+        public IFatura Update(IFatura entity)
         {
-            Fatura c = new Fatura();
-            c.Id = record.GetInt32(0);
-            c.DataEmissao = record.GetDateTime(1);
-            c.State = record.GetString(2);
-            c.Iva = record.GetDouble(3);
-            c.Total = record.GetDouble(4);
-            c.Contribuinte = null;
-            c.Items = null;
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+            SqlParameter p1 = new SqlParameter("@nif", entity.State);
 
-            return new FaturaProxy(c,context);
+            int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, UPD_CMD, new[] { p, p1 });
+            return i != 1 ? null : new FaturaProxy(entity, _ctx);
         }
 
-        public override Fatura Create(Fatura entity)
+        public IFatura Read(string id)
         {
-            return new FaturaProxy(base.Create(entity),context);
+            SqlParameter p = new SqlParameter("@id", id);
+
+            Mapper<IFatura> map = (value) =>
+            {
+                Fatura c = new Fatura();
+                c.Id = value.GetString(0);
+                c.DataEmissao = value.GetDateTime(1);
+                c.State = value.GetString(2);
+                c.Iva = value.GetDouble(3);
+                c.Total = value.GetDouble(4);
+                c.Contribuinte = null;
+                c.Items = null;
+
+                return new FaturaProxy(c, _ctx);
+            };
+
+            return SQLMapperHelper.ExecuteMapSingle<IFatura>(_ctx.Connection,
+                                                    SEL_CMD,
+                                                    new[] { p },
+                                                    map
+                                                    );
+
         }
 
-        public override Fatura Update(Fatura entity)
+        public List<IFatura> ReadAll()
         {
-            return new FaturaProxy(base.Update(entity), context);
-        }
-        
-        protected override void SelectParameters(IDbCommand cmd, int? k)
-        {
-            SqlParameter p1 = new SqlParameter("@id", k);
-            cmd.Parameters.Add(p1);
+            Mapper<IFatura> map = (value) =>
+            {
+                Fatura c = new Fatura();
+                c.Id = value.GetString(0);
+                c.DataEmissao = value.GetDateTime(1);
+                c.State = value.GetString(2);
+                c.Iva = value.GetDouble(3);
+                c.Total = value.GetDouble(4);
+                c.Contribuinte = null;
+                c.Items = null;
+
+                return new FaturaProxy(c, _ctx);
+            };
+
+            return SQLMapperHelper.ExecuteMapSet<IFatura, List<IFatura>>(_ctx.Connection,
+                                                    SEL_ALL_CMD,
+                                                    new IDbDataParameter[] { },
+                                                    map
+                                                    );
         }
 
-        protected override void UpdateParameters(IDbCommand command, Fatura e)
+        public IFatura Delete(IFatura entity)
         {
-            InsertParameters(command, e);
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, DEL_CMD, new[] { p });
+            return i != 1 ? null : new FaturaProxy(entity, _ctx);
         }
     }
 }

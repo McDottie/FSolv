@@ -11,7 +11,7 @@ namespace FSolv.mapper
     public class NotaCreditoProxy : NotaCredito
     {
         private IContext context;
-        public NotaCreditoProxy(NotaCredito c, IContext ctx) : base()
+        public NotaCreditoProxy(INotaCredito c, IContext ctx) : base()
         {
             context = ctx;
 
@@ -56,4 +56,5 @@ namespace FSolv.mapper
                 base.Fatura = value;
             }
         }
+    }
 }

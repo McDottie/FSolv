@@ -15,12 +15,13 @@ using System;
 using System.Transactions;
 using System.Data;
 using System.Data.SqlClient;
+using FSolv.IndentityMap;
 
 namespace FSolv.concrete
 {
-    class Context: IContext
+    public class Context: IContext
     {
-        private string connectionString;
+        private string _connectionString;
         private SqlConnection con = null;
 
         private ContribuinteRepository _contribuinteRepository;
@@ -28,38 +29,35 @@ namespace FSolv.concrete
         private ItemRepository _itemRepository;
         private NotaCreditoRepository _notaCreditoRepository;
         private ProductRepository _productRepository;
-
-
-
-
+        public IObjectPool Registry { get; }
         public Context(string cs)
         {
-            connectionString = cs;
+            _connectionString = cs;
             _contribuinteRepository = new ContribuinteRepository(this);
-            _faturaRepository = new FaturaRepository(this);
-            _itemRepository = new ItemRepository(this);
-            _notaCreditoRepository = new NotaCreditoRepository(this);
-            _productRepository = new ProductRepository(this);
-
+            _faturaRepository       = new FaturaRepository(this);
+            _itemRepository         = new ItemRepository(this);
+            _notaCreditoRepository  = new NotaCreditoRepository(this);
+            _productRepository      = new ProductRepository(this);
+            Registry = new ObjectPool();
         }
 
-        public void Open()
+        public SqlConnection Connection
         {
-            if (con == null)
+            get
             {
-                con = new SqlConnection(connectionString);
+                if (con == null)
+                {
+                    con = new SqlConnection(_connectionString);
 
+                }
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                EnlistTransaction();
+                return con;
             }
-            if (con.State != ConnectionState.Open)
-                con.Open();
         }
-
-        public SqlCommand createCommand()
-        {
-            Open();
-            SqlCommand cmd = con.CreateCommand();
-            return cmd;
-        }
+            
         public void Dispose()
         {
             if (con != null)
@@ -70,35 +68,15 @@ namespace FSolv.concrete
 
         }
 
-       public void EnlistTransaction()
+        private void EnlistTransaction()
         {
             if (con != null)
             {
-                con.EnlistTransaction(Transaction.Current);               
+                con.EnlistTransaction(Transaction.Current);
             }
         }
 
-        void IContext.Open()
-        {
-            throw new NotImplementedException();
-        }
-
-        SqlCommand IContext.createCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IContext.EnlistTransaction()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDisposable.Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ContribuinteRepository Countribuinte
+        public IContribuinteRepository Contribuinte
         {
             get
             {
@@ -106,7 +84,7 @@ namespace FSolv.concrete
             }
         }
 
-        public FaturaRepository Fatura
+        public IFaturaRepository Fatura
         {
             get
             {
@@ -114,7 +92,7 @@ namespace FSolv.concrete
             }
         }
 
-        public ItemRepository Item
+        public IItemRepository Item
         {
             get
             {
@@ -122,7 +100,7 @@ namespace FSolv.concrete
             }
         }
 
-        public NotaCreditoRepository NotaCredito
+        public INotaCreditoRepository NotaCredito
         {
             get
             {
@@ -130,7 +108,7 @@ namespace FSolv.concrete
             }
         }
 
-        public ProductRepository Produto
+        public IProductRepository Produto
         {
             get
             {
@@ -138,14 +116,5 @@ namespace FSolv.concrete
             }
         }
 
-        ContribuinteRepository IContext.Contribuinte => Countribuinte;
-
-        FaturaRepository IContext.Fatura => Fatura;
-
-        ItemRepository IContext.Item => Item;
-
-        NotaCreditoRepository IContext.NotaCredito => NotaCredito;
-
-        ProductRepository IContext.Produto => Produto;
     }
 }

@@ -15,20 +15,19 @@ using System;
 using System.Transactions;
 using System.Data.SqlClient;
 using FSolv.concrete;
+using FSolv.IndentityMap;
 
 namespace FSolv
 {
     public interface IContext: IDisposable
     {
-        void Open();
-        SqlCommand createCommand();
-        void EnlistTransaction();
+        SqlConnection Connection { get; }
 
-        ContribuinteRepository Contribuinte { get; }
-        FaturaRepository Fatura { get; }
-        ItemRepository Item { get; }
-        NotaCreditoRepository NotaCredito { get; }
-        ProductRepository Produto { get; }
-
+        IContribuinteRepository Contribuinte { get; }
+        IFaturaRepository Fatura { get; }
+        IItemRepository Item { get; }
+        INotaCreditoRepository NotaCredito { get; }
+        IProductRepository Produto { get; }
+        IObjectPool Registry { get; }
     }
 }

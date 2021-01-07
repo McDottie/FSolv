@@ -21,7 +21,7 @@ namespace FSolv.mapper.concrete
     class FaturaProxy: Fatura
     {
         private IContext context;
-        public FaturaProxy(Fatura c, IContext ctx) : base()
+        public FaturaProxy(IFatura c, IContext ctx) : base()
         {
             context = ctx;
 

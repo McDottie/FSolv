@@ -15,7 +15,7 @@ using FSolv.model;
 
 namespace FSolv
 {
-    interface IContribuinteRepository: IRepository<Contribuinte>
+    public interface IContribuinteRepository: IRepository<Contribuinte>
     {
     }
 }

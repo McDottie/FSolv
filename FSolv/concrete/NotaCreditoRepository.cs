@@ -7,7 +7,7 @@ using FSolv.mapper.concrete;
 
 namespace FSolv.concrete
 {
-    public class NotaCreditoRepository
+    public class NotaCreditoRepository : INotaCreditoRepository
     {
         private IContext context;
         public NotaCreditoRepository(IContext ctx)

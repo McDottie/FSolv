@@ -11,7 +11,7 @@ namespace FSolv.mapper
     class ContribuinteProxy : Contribuinte
     {
         private IContext context;
-        public ContribuinteProxy(Contribuinte c, IContext ctx) : base()
+        public ContribuinteProxy(IContribuinte c, IContext ctx) : base()
         {
             context = ctx;
             base.Nif = c.Nif;

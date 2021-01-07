@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FSolv.model
 {
-    public class NotaCredito
+    public class NotaCredito : INotaCredito
     {
         public int? Id { get; set; }
         public virtual Fatura Fatura { get; set; }

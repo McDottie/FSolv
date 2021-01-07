@@ -5,7 +5,7 @@ using FSolv.model;
 
 namespace FSolv
 {
-    interface INotaCreditoRepository : IRepository<NotaCredito>
+    public interface INotaCreditoRepository : IRepository<NotaCredito>
     {
     }
 }

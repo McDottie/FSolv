@@ -15,7 +15,7 @@ using FSolv.model;
 
 namespace FSolv
 {
-    interface IFaturaRepository:IRepository<Fatura>
+    public interface IFaturaRepository:IRepository<Fatura>
     {
     }
 }

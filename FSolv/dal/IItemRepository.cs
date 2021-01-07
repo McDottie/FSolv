@@ -15,7 +15,7 @@ using FSolv.model;
 
 namespace FSolv
 {
-    interface IItemRepository: IRepository<Item>
+    public interface IItemRepository : IRepository<Item>
     {
     }
 }

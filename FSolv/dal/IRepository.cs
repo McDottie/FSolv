@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace FSolv
 {
-    interface IRepository<T>
+    public interface IRepository<T>
     {
         IEnumerable<T> FindAll();//Possíveis Problemas de desempenho!!!
         IEnumerable<T> Find(System.Func<T, bool> criteria);

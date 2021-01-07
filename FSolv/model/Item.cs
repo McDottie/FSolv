@@ -16,7 +16,7 @@ using FSolv.model;
 
 namespace FSolv.model
 {
-    public class Item
+    public class Item : IItem
     {
         public int? Id { get; set; }
         public double Desconto { get; set; }

@@ -17,9 +17,9 @@ using System.Collections.Generic;
 namespace FSolv.model
 
 {
-    public class Fatura
+    public class Fatura : IFatura
     {
-        public int? Id { get; set; }
+        public string Id { get; set; }
         public DateTime DataEmissao { get; set; }
         
         public string State { get; set; }

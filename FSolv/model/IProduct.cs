@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FSolv.model
 {
-    public interface IProduto
+    public interface IProduct
     {
         int? Sku { get; set; }
         double Valor { get; set; }

@@ -60,9 +60,12 @@
     <Compile Include="dal\IFaturaRepository.cs" />
     <Compile Include="dal\IItemRepository.cs" />
     <Compile Include="dal\INotaCreditoRepository.cs" />
+    <Compile Include="dal\IObjectPool.cs" />
     <Compile Include="dal\IProductRepository.cs" />
     <Compile Include="dal\IRepository.cs" />
+    <Compile Include="helper\SQLMapperHelper.cs" />
     <Compile Include="mapper\AbstracMapper.cs" />
+    <Compile Include="mapper\ProductProxy.cs" />
     <Compile Include="mapper\ContribuinteProxy.cs" />
     <Compile Include="mapper\FaturaProxy.cs" />
     <Compile Include="mapper\IContribuinteMapper.cs" />
@@ -75,6 +78,11 @@
     <Compile Include="mapper\NotaCreditoProxy.cs" />
     <Compile Include="model\Contribuinte.cs" />
     <Compile Include="model\Fatura.cs" />
+    <Compile Include="model\IContribuinte.cs" />
+    <Compile Include="model\IFatura.cs" />
+    <Compile Include="model\IItem.cs" />
+    <Compile Include="model\INotaCredito.cs" />
+    <Compile Include="model\IProduct.cs" />
     <Compile Include="model\Item.cs" />
     <Compile Include="model\NotaCredito.cs" />
     <Compile Include="model\Product.cs" />

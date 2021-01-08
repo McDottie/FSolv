@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FSolv.mapper.interfaces
 
 {
-    interface IProductMapper : IMapper<Product, int?, List<Product>>
+    interface IProductMapper : IMapper<IProduct, int?, List<IProduct>>
     {
     }
 }

@@ -17,7 +17,7 @@ using System.Collections.Generic;
 namespace FSolv.mapper.interfaces
 {
 
-    interface IItemMapper : IMapper<Item, int?, List<Item>>
+    interface IItemMapper : IMapper<IItem, int?, List<IItem>>
     {
     }
 }

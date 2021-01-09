@@ -77,11 +77,6 @@
     <Compile Include="mapper\NotaCreditoProxy.cs" />
     <Compile Include="model\Contribuinte.cs" />
     <Compile Include="model\Fatura.cs" />
-    <Compile Include="model\IContribuinte.cs" />
-    <Compile Include="model\IFatura.cs" />
-    <Compile Include="model\IItem.cs" />
-    <Compile Include="model\INotaCredito.cs" />
-    <Compile Include="model\IProduto.cs" />
     <Compile Include="model\Item.cs" />
     <Compile Include="model\NotaCredito.cs" />
     <Compile Include="model\Produto.cs" />

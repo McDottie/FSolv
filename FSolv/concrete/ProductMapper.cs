@@ -48,8 +48,8 @@ namespace FSolv.mapper.concrete
                 Produto p = new Produto();
                 p.Sku = value.GetInt32(0);
                 p.Descricao = value.GetString(1);
-                p.Valor = value.GetInt32(2);
-                p.Iva = value.GetInt32(3);
+                p.Valor = value.GetDecimal(2);
+                p.Iva = value.GetDecimal(3);
                 return p;
             };
 
@@ -63,8 +63,8 @@ namespace FSolv.mapper.concrete
                 Produto p = new Produto();
                 p.Sku = value.GetInt32(0);
                 p.Descricao = value.GetString(1);
-                p.Valor = value.GetDouble(2);
-                p.Iva = value.GetDouble(3);
+                p.Valor = value.GetDecimal(2);
+                p.Iva = value.GetDecimal(3);
                 return p;
             };
 

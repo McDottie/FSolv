@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-﻿/*
+/*
 *  ISEL-ADEETC-SI2
 *   ND 2014-2020
 *
@@ -27,10 +26,11 @@ namespace FSolv.mapper.concrete
         public ItemProxy(IItem s, IContext ctx):base()
         {
             base.Desconto = s.Desconto;
+            base.Qnt = s.Qnt;
             base.Id = s.Id;
             base.Fatura= null;
             base.NotaCredito = null;
-            base.Product = null;
+            base.Produto = null;
 
             context = ctx;
         }

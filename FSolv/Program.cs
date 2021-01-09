@@ -23,6 +23,7 @@ using System.Configuration;
 using FSolv.concrete;
 using FSolv.model;
 using FSolv.mapper.concrete;
+using Interfaces;
 
 namespace FSolv
 {
@@ -34,21 +35,116 @@ namespace FSolv
             string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 
             /** TESTAR CONTRIBUINTE*/
-            Console.WriteLine("TESTAR CONTRIBUINTE");
+            /*Console.WriteLine("TESTAR CONTRIBUINTE");
 
             using (Context ctx = new Context(connectionString))
             {
                 IContribuinteRepository crepo = ctx.Contribuinte;
-
+                IContribuinte c = null;
+                int i = 0;
                 foreach (var contribuinte in crepo.FindAll())
                 {
-                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
+                    if(i == 2)
+                        c = contribuinte;
+                    i++;
+                    Console.WriteLine("Contribuinte: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                 }
 
-            }
+                foreach (var contribuinte in c.Faturas)
+                {
+                    Console.WriteLine("Fatura: {0}-{1}-{2}", contribuinte.Id, contribuinte.Total, contribuinte.DataEmissao);
+                } 
 
-            
-            
+            }*/
+
+            /** TESTAR FATURA*/
+            /*Console.WriteLine("TESTAR CONTRIBUINTE");
+
+            using (Context ctx = new Context(connectionString))
+            {
+                IFaturaRepository crepo = ctx.Fatura;
+                IFatura f = null;
+                int i = 0;
+                foreach (var fatura in crepo.FindAll())
+                {
+                    if (i == 1)
+                        f = fatura;
+                    i++;
+                    Console.WriteLine("Fatura: {0}, {1}, {2}, {3}", fatura.Id, fatura.Iva, fatura.Total, fatura.DataEmissao);
+                }
+                
+                foreach (var item in f.Items)
+                {
+                    Console.WriteLine("Items: {0}-{1}-{2}", item.Id, item.Qnt, item.Desconto);
+                }
+
+                IContribuinte cf = f.Contribuinte;
+                Console.WriteLine("Contribuinte: {0}-{1}-{2}", cf.Name, cf.Nif, cf.Morada);
+            }*/
+
+            /** TESTAR NOTA CREDITO*/
+            /*Console.WriteLine("TESTAR CONTRIBUINTE");
+
+            using (Context ctx = new Context(connectionString))
+            {
+                INotaCreditoRepository crepo = ctx.NotaCredito;
+                INotaCredito nc = null;
+                int i = 0;
+                foreach (var notcred in crepo.FindAll())
+                {
+                    if (i == 0)
+                        nc = notcred;
+                    i++;
+                    Console.WriteLine("Nota De Credito: {0}, {1}", notcred.Id, notcred.State);
+                }
+
+                foreach (var item in nc.Items)
+                {
+                    Console.WriteLine("Items: {0}-{1}-{2}", item.Id, item.Qnt, item.Desconto);
+                }
+
+            }*/
+
+            /** TESTAR ITEM*/
+            /*Console.WriteLine("TESTAR ITEM");
+
+            using (Context ctx = new Context(connectionString))
+            {
+                IItemRepository crepo = ctx.Item;
+                IItem it = null;
+                int i = 0;
+                foreach (var item in crepo.FindAll())
+                {
+                    if (i == 0)
+                        it = item;
+                    i++;
+                    Console.WriteLine("Item: {0}, {1}, {2}", item.Id, item.Desconto, item.Qnt);
+                }
+
+                IFatura fatura = it.Fatura;
+                Console.WriteLine("Fatura: {0}, {1}, {2}, {3}, {4}", fatura.Id, fatura.Iva, fatura.State, fatura.DataEmissao, fatura.Total); 
+                
+                IProduto prod = it.Produto;
+                Console.WriteLine("Contribuinte: {0}-{1}-{2}, {3}", prod.Sku, prod.Descricao, prod.Iva, prod.Valor);
+
+            }*/
+
+            /** TESTAR ITEM*/
+            Console.WriteLine("TESTAR PRODUTO");
+
+            using (Context ctx = new Context(connectionString))
+            {
+                IProductRepository crepo = ctx.Produto;
+                IProduto it = null;
+                int i = 0;
+                foreach (var item in crepo.FindAll())
+                {
+                    if (i == 0)
+                        it = item;
+                    i++;
+                    Console.WriteLine("Item: {0}, {1}, {2}, {3}", item.Sku, item.Descricao, item.Iva, item.Valor);
+                }
+            }
         }
     }
 }

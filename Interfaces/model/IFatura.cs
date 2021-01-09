@@ -15,9 +15,9 @@ namespace Interfaces
 
         IContribuinte Contribuinte { get; set; }
 
-        double Iva { get; set; }
+        decimal Iva { get; set; }
 
-        double Total { get; set; }
+        decimal Total { get; set; }
 
         List<IItem> Items { get; set; }
     }

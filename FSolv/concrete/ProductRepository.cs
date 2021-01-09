@@ -1,6 +1,6 @@
-﻿using FSolv.dal;
-using FSolv.mapper.concrete;
+﻿using FSolv.mapper.concrete;
 using FSolv.model;
+using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,13 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-        public IEnumerable<Produto> Find(Func<Produto, bool> criteria)
+        public IEnumerable<IProduto> Find(Func<IProduto, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<Produto> FindAll()
+        public IEnumerable<IProduto> FindAll()
         {
             return new ProductMapper(context).ReadAll();
         }

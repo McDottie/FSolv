@@ -20,7 +20,7 @@ namespace FSolv.model
     public class Item : IItem
     {
         public int? Id { get; set; }
-        public double Desconto { get; set; }
+        public decimal Desconto { get; set; }
         public int Qnt { get; set; }
         public virtual IProduto Produto { get; set; }
         public virtual IFatura Fatura { get; set; }

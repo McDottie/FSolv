@@ -28,7 +28,7 @@ namespace FSolv.helper
                 {
                     cmd.CommandText = cmdtxt;
                     cmd.Parameters.AddRange(dbDataParameters);
-                    con.Open();
+                    //con.Open();
                     return cmd.ExecuteNonQuery();
                 }
         }
@@ -40,7 +40,7 @@ namespace FSolv.helper
                 {
                     cmd.CommandText = cmdtxt;
                     cmd.Parameters.AddRange(dbDataParameters);
-                    con.Open();
+                    //con.Open();
                     return (T)cmd.ExecuteScalar();
                 }
             
@@ -52,8 +52,10 @@ namespace FSolv.helper
             {
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                con.Open();
-                return map(cmd.ExecuteReader());
+                //con.Open();
+                var reader = cmd.ExecuteReader();
+                reader.Read();
+                return map.Invoke(reader);
             }
         }
 
@@ -64,7 +66,7 @@ namespace FSolv.helper
             {
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                con.Open();
+                //con.Open();
 
                 TCol list = new TCol(); 
                 SqlDataReader sdr = cmd.ExecuteReader();

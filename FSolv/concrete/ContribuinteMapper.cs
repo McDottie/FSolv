@@ -33,8 +33,8 @@ namespace FSolv.mapper.concrete
                 f.Id = value.GetString(0);
                 f.DataEmissao = value.GetDateTime(1);
                 f.State = value.GetString(2);
-                f.Iva = value.GetDouble(3);
-                f.Total = value.GetDouble(4);
+                f.Iva = value.GetDecimal(3);
+                f.Total = value.GetDecimal(4);
 
                 return new FaturaProxy(f, _ctx);
             };
@@ -52,8 +52,8 @@ namespace FSolv.mapper.concrete
         #endregion
 
         private readonly IContext _ctx;
-        private const string INS_CMD = "INSERT INTO TP1.Contribuinte (name,nif,morada) VALUES(@Name,@Nif,@Morada)";
-        private const string SEL_ALL_CMD = "select name,nif,morada from TP1.Contribuinte";
+        private const string INS_CMD = "INSERT INTO TP1.Contribuinte (nome,nif,morada) VALUES(@Name,@Nif,@Morada)";
+        private const string SEL_ALL_CMD = "select nome,nif,morada from TP1.Contribuinte";
         private const string SEL_CMD =  SEL_ALL_CMD + "where nif=@Nif";
         private const string UPD_CMD = "update TP1.Contribuinte set morada=@Morada where nif=@Nif";
         private const string DEL_CMD = "delete from TP1.Contribuinte where nif=@id";
@@ -68,7 +68,7 @@ namespace FSolv.mapper.concrete
         {
             SqlParameter p1 = new SqlParameter("@Morada", entity.Morada);
             SqlParameter p2 = new SqlParameter("@Nif", entity.Nif);
-
+            
             entity.Nif = SQLMapperHelper.ExecuteScalar<int>(_ctx.Connection,
                                                             INS_CMD,
                                                             new[] { p1, p2 });
@@ -94,6 +94,8 @@ namespace FSolv.mapper.concrete
                 Contribuinte entity = new Contribuinte();
                 entity.Name = value.GetString(0);
                 entity.Nif = id;
+                if(!value.IsDBNull(2))
+                    entity.Morada = value.GetString(2);
                 return new ContribuinteProxy(entity, _ctx);
             };
 
@@ -111,8 +113,9 @@ namespace FSolv.mapper.concrete
             {
                 Contribuinte entity = new Contribuinte();
                 entity.Name = value.GetString(0);
-                entity.Nif = value.GetInt32(1);
-                entity.Morada = value.GetString(2);
+                entity.Nif = value.GetInt64(1);
+                if (!value.IsDBNull(2))
+                    entity.Morada = value.GetString(2);
 
                 return new ContribuinteProxy(entity, _ctx); ;
             };

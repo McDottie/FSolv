@@ -12,10 +12,11 @@
 *	nas aulas.
 */
 using FSolv.model;
+using Interfaces;
 
 namespace FSolv
 {
-    public interface IItemRepository : IRepository<Item>
+    public interface IItemRepository : IRepository<IItem>
     {
     }
 }

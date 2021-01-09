@@ -19,7 +19,7 @@ namespace FSolv.mapper.concrete
                 Item i = new Item();
                 i.Id = value.GetInt32(0);
                 i.Qnt = value.GetInt32(1);
-                i.Desconto = value.GetDouble(2);
+                i.Desconto = value.GetDecimal(2);
 
                 return new ItemProxy(i, _ctx);
             };
@@ -44,8 +44,8 @@ namespace FSolv.mapper.concrete
                 f.Id = value.GetString(0);
                 f.DataEmissao = value.GetDateTime(1);
                 f.State = value.GetString(2);
-                f.Iva = value.GetDouble(3);
-                f.Total = value.GetDouble(4);
+                f.Iva = value.GetDecimal(3);
+                f.Total = value.GetDecimal(4);
 
                 return new FaturaProxy(f, _ctx);
             };

@@ -27,9 +27,9 @@ namespace FSolv.model
 
         public virtual IContribuinte Contribuinte { get; set; }
 
-        public double Iva { get; set; }
+        public decimal Iva { get; set; }
         
-        public double Total { get; set; }
+        public decimal Total { get; set; }
 
         public virtual List<IItem> Items { get; set; }
 

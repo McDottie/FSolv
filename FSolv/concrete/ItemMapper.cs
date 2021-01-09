@@ -21,8 +21,8 @@ namespace FSolv.mapper.concrete
                 f.Id = value.GetString(0);
                 f.DataEmissao = value.GetDateTime(1);
                 f.State = value.GetString(2);
-                f.Iva = value.GetDouble(3);
-                f.Total = value.GetDouble(4);
+                f.Iva = value.GetDecimal(3);
+                f.Total = value.GetDecimal(4);
 
                 return new FaturaProxy(f, ctx);
             };
@@ -32,9 +32,9 @@ namespace FSolv.mapper.concrete
             SqlParameter p = new SqlParameter("@id", entity.Id);
 
             lst = SQLMapperHelper.ExecuteMapSingle<IFatura>(ctx.Connection,
-                                  "select id, dt_emissao, estado, iva, valor_total from TP1.Fatura_item " +
+                                  "select id_fatura, dt_emissao, estado, iva, valor_total from TP1.Fatura_item " +
                                   "join TP1.Fatura on TP1.Fatura.id = id_fatura " +
-                                  "where id = @id",
+                                  "where cod_item = @id",
                                     new[] { p }, map);
 
             return lst;
@@ -71,8 +71,8 @@ namespace FSolv.mapper.concrete
                 Produto prod = new Produto();
                 prod.Sku = value.GetInt32(0);
                 prod.Descricao = value.GetString(1);
-                prod.Valor = value.GetInt32(2);
-                prod.Iva = value.GetInt32(3);
+                prod.Valor = value.GetDecimal(2);
+                prod.Iva = value.GetDecimal(3);
                 return prod;
             };
 
@@ -95,7 +95,7 @@ namespace FSolv.mapper.concrete
 
         private const string INS_CMD = "insert into TP1.Item(quantidade, desconto, cod_prod) output INSERTED.id values(@quantidade, @desconto, @cod_prod); ";
 
-        private const string SEL_ALL_CMD = "select id, cod_prod, quantidade, desconto from TP1.Item";
+        private const string SEL_ALL_CMD = "select id, quantidade, desconto from TP1.Item";
 
         private const string SEL_CMD = SEL_ALL_CMD + " where id=@id";
 
@@ -113,7 +113,7 @@ namespace FSolv.mapper.concrete
                 return InsertItemInNC(item);
             } else
             {
-                SqlParameter cod_ft = new SqlParameter("@cod_prod", item.Fatura.Id);
+                SqlParameter cod_ft = new SqlParameter("@cod_fatura", item.Fatura.Id);
                 SqlParameter cod_prod = new SqlParameter("@cod_prod", item.Produto.Sku);
                 SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
                 SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
@@ -151,7 +151,7 @@ namespace FSolv.mapper.concrete
                 Item item = new Item();
                 item.Id = id;
                 item.Qnt = value.GetInt32(2);
-                item.Desconto = value.GetDouble(3);
+                item.Desconto = value.GetDecimal(3);
                 // falta o produto
                 return new ItemProxy(item, ctx);
             };
@@ -165,8 +165,8 @@ namespace FSolv.mapper.concrete
             {
                 Item i = new Item();
                 i.Id = value.GetInt32(0);
-                i.Desconto = value.GetDouble(1);
-                i.Qnt = value.GetInt32(2);
+                i.Qnt = value.GetInt32(1);
+                i.Desconto = value.GetDecimal(2);
                 // falta o produto
                 return new ItemProxy(i, ctx);
             };

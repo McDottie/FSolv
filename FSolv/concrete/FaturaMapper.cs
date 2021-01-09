@@ -34,7 +34,7 @@ namespace FSolv.mapper.concrete
                 Item i = new Item();
                 i.Id = value.GetInt32(0);
                 i.Qnt = value.GetInt32(1);
-                i.Desconto = value.GetDouble(2);
+                i.Desconto = value.GetDecimal(2);
 
                 return new ItemProxy(i, _ctx);
             };
@@ -58,8 +58,9 @@ namespace FSolv.mapper.concrete
             {
                 Contribuinte entity = new Contribuinte();
                 entity.Name = value.GetString(0);
-                entity.Morada = value.GetString(1);
-                entity.Nif = value.GetInt32(2);
+                if (!value.IsDBNull(1))
+                    entity.Morada = value.GetString(1);
+                entity.Nif = value.GetInt64(2);
                 return new ContribuinteProxy(entity, _ctx);
             };
 
@@ -68,7 +69,7 @@ namespace FSolv.mapper.concrete
             SqlParameter p = new SqlParameter("@id", fatura.Id);
 
             c = SQLMapperHelper.ExecuteMapSingle<IContribuinte>(_ctx.Connection,
-                                  "SELECT name,morada,nif from TP1.Contribuinte JOIN TP1.Fatura where id_fatura = @id",
+                                  "SELECT nome,morada,C.nif from TP1.Contribuinte C JOIN TP1.Fatura F on C.nif = F.nif where F.id = @id",
                                     new[] { p }, map);
 
             return c;
@@ -124,8 +125,8 @@ namespace FSolv.mapper.concrete
                 c.Id = value.GetString(0);
                 c.DataEmissao = value.GetDateTime(1);
                 c.State = value.GetString(2);
-                c.Iva = value.GetDouble(3);
-                c.Total = value.GetDouble(4);
+                c.Iva = value.GetDecimal(3);
+                c.Total = value.GetDecimal(4);
                 c.Contribuinte = null;
                 c.Items = null;
 
@@ -148,8 +149,8 @@ namespace FSolv.mapper.concrete
                 c.Id = value.GetString(0);
                 c.DataEmissao = value.GetDateTime(1);
                 c.State = value.GetString(2);
-                c.Iva = value.GetDouble(3);
-                c.Total = value.GetDouble(4);
+                c.Iva = value.GetDecimal(3);
+                c.Total = value.GetDecimal(4);
                 c.Contribuinte = null;
                 c.Items = null;
 

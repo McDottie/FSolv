@@ -18,7 +18,6 @@ namespace FSolv.mapper
 
             base.Id = c.Id;
             base.State = c.State;
-            base.DataEmissao = c.DataEmissao;
             base.Fatura = null;
             base.Items = null;
         }

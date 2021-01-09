@@ -8,7 +8,7 @@ namespace Interfaces
 {
     public interface IContribuinte
     {
-        int? Nif { get; set; }
+        long? Nif { get; set; }
         string Name { get; set; }
         string Morada { get; set; }
         List<IFatura> Faturas { get; set; }

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using FSolv.mapper.concrete;
 using System;
 using FSolv.model;
+using Interfaces;
 
 namespace FSolv.concrete
 {
@@ -26,13 +27,13 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-        public IEnumerable<Item> Find(Func<Item, bool> criteria)
+        public IEnumerable<IItem> Find(Func<IItem, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<Item> FindAll()
+        public IEnumerable<IItem> FindAll()
         {
             return new ItemMapper(context).ReadAll();
         }

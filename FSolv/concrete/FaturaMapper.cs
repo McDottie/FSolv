@@ -27,7 +27,7 @@ namespace FSolv.mapper.concrete
     class FaturaMapper : IFaturaMapper
     {
         #region HELPER METHODS  
-        internal List<IItem> LoadItems(Fatura entity)
+        internal List<IItem> LoadItems(IFatura entity)
         {
             Mapper<IItem> map = (value) =>
             {
@@ -52,7 +52,7 @@ namespace FSolv.mapper.concrete
             return lst;
         }
 
-        internal IContribuinte LoadContribuinte(Fatura fatura)
+        internal IContribuinte LoadContribuinte(IFatura fatura)
         {
             Mapper<IContribuinte> map = (value) =>
             {
@@ -76,7 +76,7 @@ namespace FSolv.mapper.concrete
         #endregion
 
         private readonly IContext _ctx;
-        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, @id)";
+        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, output @id)";
         private const string SEL_ALL_CMD = "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
         private const string SEL_CMD = SEL_ALL_CMD + "where id=@id";
         private const string UPD_CMD = "exec TP1.alt_estado_fatura (@id, @estado)";

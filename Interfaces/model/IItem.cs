@@ -11,7 +11,7 @@ namespace Interfaces
         int? Id { get; set; }
         double Desconto { get; set; }
         int Qnt { get; set; }
-        IProduto Product { get; set; }
+        IProduto Produto { get; set; }
         IFatura Fatura { get; set; }
         INotaCredito NotaCredito { get; set; }
     }

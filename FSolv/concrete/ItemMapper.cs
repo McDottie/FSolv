@@ -5,6 +5,7 @@ using System;
 using FSolv.model;
 using FSolv.mapper.interfaces;
 using FSolv.helper;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -12,19 +13,78 @@ namespace FSolv.mapper.concrete
     class ItemMapper : IItemMapper
     {
         #region HELPER METHODS  
-        internal Fatura LoadFatura(Item s)
+        internal IFatura LoadFatura(IItem entity)
         {
-            throw new NotImplementedException();
+            Mapper<IFatura> map = (value) =>
+            {
+                Fatura f = new Fatura();
+                f.Id = value.GetString(0);
+                f.DataEmissao = value.GetDateTime(1);
+                f.State = value.GetString(2);
+                f.Iva = value.GetDouble(3);
+                f.Total = value.GetDouble(4);
+
+                return new FaturaProxy(f, ctx);
+            };
+
+            IFatura lst;
+
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            lst = SQLMapperHelper.ExecuteMapSingle<IFatura>(ctx.Connection,
+                                  "select id, dt_emissao, estado, iva, valor_total from TP1.Fatura_item " +
+                                  "join TP1.Fatura on TP1.Fatura.id = id_fatura " +
+                                  "where id = @id",
+                                    new[] { p }, map);
+
+            return lst;
         }
 
-        internal NotaCredito LoadNotaCredito(Item s)
+        internal INotaCredito LoadNotaCredito(IItem entity)
         {
-            throw new NotImplementedException();
+            Mapper<INotaCredito> map = (value) =>
+            {
+                NotaCredito n = new NotaCredito();
+                n.Id = value.GetString(0);
+                n.State = value.GetString(1);
+
+                return new NotaCreditoProxy(n, ctx);
+            };
+
+            INotaCredito lst;
+
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            lst = SQLMapperHelper.ExecuteMapSingle<INotaCredito>(ctx.Connection,
+                                  "select id, estado from TP1.NC_item " +
+                                  "join TP1.Nota_Credito on TP1.Nota_Credito.id = id_nc " +
+                                  "where id = @id",
+                                    new[] { p }, map);
+
+            return lst;
         }
 
-        internal Product LoadProduct(Item s)
+        internal IProduto LoadProduct(IItem entity)
         {
-            throw new NotImplementedException();
+            Mapper<IProduto> map = (value) =>
+            {
+                Produto prod = new Produto();
+                prod.Sku = value.GetInt32(0);
+                prod.Descricao = value.GetString(1);
+                prod.Valor = value.GetInt32(2);
+                prod.Iva = value.GetInt32(3);
+                return prod;
+            };
+
+            IProduto prd;
+
+            SqlParameter p = new SqlParameter("@id", entity.Id);
+
+            prd = SQLMapperHelper.ExecuteMapSingle<IProduto>(ctx.Connection,
+                                  "select sku, descricao, valor, iva from TP1.Produto join TP1.Item on cod_prod = sku where id = @id",
+                                    new[] { p }, map);
+
+            return prd;
         }
         #endregion
 
@@ -33,7 +93,7 @@ namespace FSolv.mapper.concrete
 
         private const string DEL_CMD = "delete from TP1.Item where id=@id";
 
-        private const string INS_CMD = "insert into TP1.Item(quantidade, desconto, cod_prod) values(@quantidade, @desconto, @cod_prod)";
+        private const string INS_CMD = "insert into TP1.Item(quantidade, desconto, cod_prod) output INSERTED.id values(@quantidade, @desconto, @cod_prod); ";
 
         private const string SEL_ALL_CMD = "select id, cod_prod, quantidade, desconto from TP1.Item";
 
@@ -41,15 +101,45 @@ namespace FSolv.mapper.concrete
 
         private const string UPD_CMD = "update TP1.Item set desconto=@desconto, quantidade=@quantidade where id=@id";
 
+        private const string INS_NC = "exec TP1.addItem_NC (@nc_cod, @item, @qnt)";
+
+        private const string INS_FT = "exec TP1.addItem_Fatura (@cod_fatura, @sku, @qnt, @desconto, ouput @id)";
+        
+
         public IItem Create(IItem item)
         {
-            SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
-            SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
+            if (item.Id != null)
+            {
+                return InsertItemInNC(item);
+            } else
+            {
+                SqlParameter cod_ft = new SqlParameter("@cod_prod", item.Fatura.Id);
+                SqlParameter cod_prod = new SqlParameter("@cod_prod", item.Produto.Sku);
+                SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
+                SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
+                SqlParameter id = new SqlParameter("@id", SqlDbType.Int);
+                
+                id.Direction = ParameterDirection.Output;
 
-            // falta aqui o cod_prod
-            item.Id = SQLMapperHelper.ExecuteScalar<int>(ctx.Connection, INS_CMD, new[] { quantidade, desconto });
 
-            return new ItemProxy(item, ctx);
+                item.Id = SQLMapperHelper.ExecuteScalar<int>(ctx.Connection, INS_CMD, new[] { cod_ft, cod_prod, quantidade, desconto, id });
+
+                return new ItemProxy(item, ctx);
+
+            }
+
+        }
+
+        private IItem InsertItemInNC(IItem item)
+        {
+            INotaCredito nc = item.NotaCredito;
+
+            SqlParameter nc_cod = new SqlParameter("@nc_cod", nc.Id);
+            SqlParameter id = new SqlParameter("@item", item.Id);
+            SqlParameter quantidade = new SqlParameter("@qnt", item.Qnt);
+
+            int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, INS_NC, new[] { nc_cod, id,quantidade });
+            return res != 1 ? null : new ItemProxy(item, ctx);
         }
 
         public IItem Read(int? id)

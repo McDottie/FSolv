@@ -25,9 +25,29 @@ namespace FSolv.mapper.concrete
     class ContribuinteMapper : IContribuinteMapper
     {
         #region HELPER METHOD 
-        internal List<IFatura> LoadFaturas(ContribuinteProxy contribuinteProxy)
+        internal List<IFatura> LoadFaturas(IContribuinte contribuinte)
         {
-            throw new NotImplementedException();
+            Mapper<IFatura> map = (value) =>
+            {
+                Fatura f = new Fatura();
+                f.Id = value.GetString(0);
+                f.DataEmissao = value.GetDateTime(1);
+                f.State = value.GetString(2);
+                f.Iva = value.GetDouble(3);
+                f.Total = value.GetDouble(4);
+
+                return new FaturaProxy(f, _ctx);
+            };
+
+            List<IFatura> lst;
+
+            SqlParameter p = new SqlParameter("@nif", contribuinte.Nif);
+
+            lst = SQLMapperHelper.ExecuteMapSet<IFatura, List<IFatura>>(_ctx.Connection,
+                                  "select id, dt_emissao, estado, iva, valor_total from TP1.fatura where nif = @nif",
+                                    new[] { p }, map);
+
+            return lst;
         }
         #endregion
 

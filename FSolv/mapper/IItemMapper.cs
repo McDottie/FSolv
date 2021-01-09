@@ -12,6 +12,7 @@
 *	nas aulas.
 */
 using FSolv.model;
+using Interfaces;
 using System.Collections.Generic;
 
 namespace FSolv.mapper.interfaces

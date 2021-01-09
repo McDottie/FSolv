@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IProduct
+    public interface IProduto
     {
         int? Sku { get; set; }
         double Valor { get; set; }

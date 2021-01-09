@@ -15,13 +15,13 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-        public IEnumerable<Product> Find(Func<Product, bool> criteria)
+        public IEnumerable<Produto> Find(Func<Produto, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<Product> FindAll()
+        public IEnumerable<Produto> FindAll()
         {
             return new ProductMapper(context).ReadAll();
         }

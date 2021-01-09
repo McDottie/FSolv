@@ -71,21 +71,21 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override IProduto Product
+        public override IProduto Produto
         {
             get
             {
-                if (base.Product == null)
+                if (base.Produto == null)
                 {
                     ItemMapper sm = new ItemMapper(context);
-                    base.Product = sm.LoadProduct(this);
+                    base.Produto = sm.LoadProduct(this);
                 }
-                return base.Product;
+                return base.Produto;
             }
 
             set
             {
-                base.Product = value;
+                base.Produto = value;
             }
         }
 

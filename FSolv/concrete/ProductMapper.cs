@@ -6,6 +6,7 @@ using System.Data;
 using FSolv;
 using FSolv.helper;
 using System.Data.SqlClient;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -26,7 +27,7 @@ namespace FSolv.mapper.concrete
 
         private const string INS_CMD = "insert into TP1.Produto(sku, valor, descricao, iva) values(@sku, @valor, @descricao, @iva)";
 
-        public IProduct Create(IProduct product)
+        public IProduto Create(IProduto product)
         {
             SqlParameter sku = new SqlParameter("@sku", product.Sku);
             SqlParameter valor = new SqlParameter("@valor", product.Valor);
@@ -35,56 +36,56 @@ namespace FSolv.mapper.concrete
 
             product.Sku = SQLMapperHelper.ExecuteScalar<int>(ctx.Connection, INS_CMD, new[] { sku, valor, descricao, iva });
 
-            return new ProductProxy(product, ctx);
+            return product;
         }
 
-        public IProduct Read(int? id)
+        public IProduto Read(int? id)
         {
             SqlParameter sku = new SqlParameter("@sku", id);
 
-            Mapper<IProduct> map = (value) =>
+            Mapper<IProduto> map = (value) =>
             {
-                Product p = new Product();
-                p.Sku = id;
+                Produto p = new Produto();
+                p.Sku = value.GetInt32(0);
                 p.Descricao = value.GetString(1);
                 p.Valor = value.GetInt32(2);
                 p.Iva = value.GetInt32(3);
-                return new ProductProxy(p, ctx);
+                return p;
             };
 
-            return SQLMapperHelper.ExecuteMapSingle<IProduct>(ctx.Connection, SEL_CMD, new[] { sku }, map);
+            return SQLMapperHelper.ExecuteMapSingle<IProduto>(ctx.Connection, SEL_CMD, new[] { sku }, map);
         }
 
-        public List<IProduct> ReadAll()
+        public List<IProduto> ReadAll()
         {
-            Mapper<IProduct> map = (value) =>
+            Mapper<IProduto> map = (value) =>
             {
-                Product p = new Product();
+                Produto p = new Produto();
                 p.Sku = value.GetInt32(0);
                 p.Descricao = value.GetString(1);
                 p.Valor = value.GetDouble(2);
                 p.Iva = value.GetDouble(3);
-                return new ProductProxy(p, ctx);
+                return p;
             };
 
-            return SQLMapperHelper.ExecuteMapSet<IProduct, List<IProduct>>(ctx.Connection, SEL_ALL_CMD, new IDbDataParameter[] { }, map);
+            return SQLMapperHelper.ExecuteMapSet<IProduto, List<IProduto>>(ctx.Connection, SEL_ALL_CMD, new IDbDataParameter[] { }, map);
         }
 
-        public IProduct Update(IProduct product)
+        public IProduto Update(IProduto product)
         {
             SqlParameter sku = new SqlParameter("@sku", product.Sku);
             SqlParameter valor = new SqlParameter("@valor", product.Valor);
 
             int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, UPD_CMD, new[] { sku, valor });
-            return res != 1 ? null : new ProductProxy(product, ctx);
+            return res != 1 ? null : product;
         }
 
-        public IProduct Delete(IProduct product)
+        public IProduto Delete(IProduto product)
         {
             SqlParameter sku = new SqlParameter("@sku", product.Sku);
 
             int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, DEL_CMD, new[] { sku });
-            return res != 1 ? null : new ProductProxy(product, ctx);
+            return res != 1 ? null : product;
         }
     }
 }

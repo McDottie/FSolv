@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿/*
 *  ISEL-ADEETC-SI2
 *   ND 2014-2020

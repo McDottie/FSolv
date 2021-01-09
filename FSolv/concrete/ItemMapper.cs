@@ -1,30 +1,15 @@
-﻿/*
-*  ISEL-ADEETC-SI2
-*   ND 2014-2020
-*
-*   Material didático para apoio 
-*   à unidade curricular de 
-*   Sistemas de Informação II
-*
-*	Os exemplos podem não ser completos e/ou totalmente correctos
-*	sendo desenvolvido com objectivos pedagógicos
-*	Eventuais incorrecções são alvo de discussão
-*	nas aulas.
-*/
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Transactions;
 using System;
-using FSolv.mapper;
 using FSolv.model;
 using FSolv.mapper.interfaces;
-using FSolv;
+using FSolv.helper;
 
 namespace FSolv.mapper.concrete
 {
 
-    class ItemMapper : AbstracMapper<Item, int?, List<Item>>, IItemMapper
+    class ItemMapper : IItemMapper
     {
         #region HELPER METHODS  
         internal Fatura LoadFatura(Item s)
@@ -41,160 +26,80 @@ namespace FSolv.mapper.concrete
         {
             throw new NotImplementedException();
         }
-
         #endregion
-        public ItemMapper(IContext ctx) : base(ctx) { }
 
-        public override Item Create(Item entity)
+        public IContext ctx;
+        public ItemMapper(IContext ctx) { this.ctx = ctx; }
+
+        private const string DEL_CMD = "delete from TP1.Item where id=@id";
+
+        private const string INS_CMD = "insert into TP1.Item(quantidade, desconto, cod_prod) values(@quantidade, @desconto, @cod_prod)";
+
+        private const string SEL_ALL_CMD = "select id, cod_prod, quantidade, desconto from TP1.Item";
+
+        private const string SEL_CMD = SEL_ALL_CMD + " where id=@id";
+
+        private const string UPD_CMD = "update TP1.Item set desconto=@desconto, quantidade=@quantidade where id=@id";
+
+        public IItem Create(IItem item)
         {
-            using (TransactionScope ts = new TransactionScope(TransactionScopeOption.Required))
+            SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
+            SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
+
+            // falta aqui o cod_prod
+            item.Id = SQLMapperHelper.ExecuteScalar<int>(ctx.Connection, INS_CMD, new[] { quantidade, desconto });
+
+            return new ItemProxy(item, ctx);
+        }
+
+        public IItem Read(int? id)
+        {
+            SqlParameter i = new SqlParameter("@id", id);
+
+            Mapper<IItem> map = (value) =>
             {
-                EnsureContext();
-                context.EnlistTransaction();
+                Item item = new Item();
+                item.Id = id;
+                item.Qnt = value.GetInt32(2);
+                item.Desconto = value.GetDouble(3);
+                // falta o produto
+                return new ItemProxy(item, ctx);
+            };
 
-                using (IDbCommand cmd = context.createCommand())
-                {
-                    cmd.CommandText = InsertCommandText;
-                    cmd.CommandType = InsertCommandType;
-                    InsertParameters(cmd, entity);
-                    cmd.ExecuteNonQuery();
-                    entity = UpdateEntityID(cmd, entity);
-                }
-                if (entity != null && entity.EnrolledCourses != null && entity.EnrolledCourses.Count > 0)
-                {
-                    SqlParameter p = new SqlParameter("@courseId", SqlDbType.Int);
-                    SqlParameter p1 = new SqlParameter("@studentId", entity.Number);
-
-                    List<IDataParameter> parameters = new List<IDataParameter>();
-                    parameters.Add(p);
-                    parameters.Add(p1);
-                    foreach (var course in entity.EnrolledCourses)
-                    {
-                        p.Value = course.Id;
-                        ExecuteNonQuery("INSERT INTO StudentCourse (studentId,courseId) values(@studentId,@courseId)", parameters);
-                    }
-
-                }
-                ts.Complete();
-                return entity;
-            }
-
+            return SQLMapperHelper.ExecuteMapSingle<IItem>(ctx.Connection, SEL_CMD, new[] { i }, map);
         }
 
-     
-
-        public override Item Delete(Item entity)
+        public List<IItem> ReadAll()
         {
-            if (entity == null)
-                throw new ArgumentException("The " + typeof(Item) + " to delete cannot be null");
-
-            using (TransactionScope ts = new TransactionScope(TransactionScopeOption.Required))
+            Mapper<IItem> map = (value) =>
             {
-                EnsureContext();
-                context.EnlistTransaction();
-                if (entity.EnrolledCourses != null && entity.EnrolledCourses.Count > 0)
-                {
-                    SqlParameter p = new SqlParameter("@studentId", entity.Number);
+                Item i = new Item();
+                i.Id = value.GetInt32(0);
+                i.Desconto = value.GetDouble(1);
+                i.Qnt = value.GetInt32(2);
+                // falta o produto
+                return new ItemProxy(i, ctx);
+            };
 
-                    List<IDataParameter> parameters = new List<IDataParameter>();
-                    parameters.Add(p);
-                    ExecuteNonQuery("delete from StudentCourse where studentId=@studentId", parameters);
-                }
-
-                Item del = base.Delete(entity);
-                ts.Complete();
-                return del;
-            }
-        }
-        protected override string DeleteCommandText
-        {
-            get
-            {
-                return "delete from Student where studentNumber=@id";
-            }
+            return SQLMapperHelper.ExecuteMapSet<IItem, List<IItem>>(ctx.Connection, SEL_ALL_CMD, new IDbDataParameter[] { }, map);
         }
 
-        protected override string InsertCommandText
+        public IItem Update(IItem item)
         {
-            get
-            {
-                return "insert into STUDENT(studentNumber,name,sex,dateBirth,country) values(@id,@name,@sex,@dateBirth,@country); select @id=studentNumber from STUDENT;";
-            }
+            SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
+            SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
+            SqlParameter id = new SqlParameter("@id", item.Id);
+
+            int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, UPD_CMD, new[] { desconto, quantidade, id });
+            return res != 1 ? null : new ItemProxy(item, ctx);
         }
 
-        protected override string SelectAllCommandText
+        public IItem Delete(IItem item)
         {
-            get
-            {
-                return "select studentNumber,name,sex,dateBirth,country from Student";
-            }
-        }
+            SqlParameter id = new SqlParameter("@id", item.Id);
 
-        protected override string SelectCommandText
-        {
-            get
-            {
-                return String.Format("{0} where studentNumber=@id", SelectAllCommandText);
-            }
-        }
-
-        protected override string UpdateCommandText
-        {
-            get
-            {
-                return "update Student set name=@name, sex=@sex, dateBirth=@dateBirth where studentNumber=@id";
-            }
-        }
-
-        protected override void DeleteParameters(IDbCommand cmd, Item entity)
-        {
-            SqlParameter p1 = new SqlParameter("@id", entity.Number);
-            cmd.Parameters.Add(p1);
-        }
-
-        protected override void InsertParameters(IDbCommand cmd, Item entity)
-        {
-            UpdateParameters(cmd, entity);
-        }
-
-        protected override Item Map(IDataRecord record)
-        {
-            Item s = new Item();
-            s.Number = record.GetInt32(0);
-            s.Name = record.GetString(1);
-            s.Sex = (record.GetString(2).ToCharArray())[0];
-            s.DateOfBirth = record.GetDateTime(3).ToLongDateString();
-            
-            return new ItemProxy(s, context, record.GetInt32(4));
-        }
-        
-        protected override void SelectParameters(IDbCommand cmd, int? id)
-        {
-            SqlParameter p = new SqlParameter("@id", id);
-            cmd.Parameters.Add(p);
-        }
-
-        protected override Item UpdateEntityID(IDbCommand cmd, Item e)
-        {
-            var param = cmd.Parameters["@id"] as SqlParameter;
-            e.Number = int.Parse(param.Value.ToString());
-            return e;
-        }
-
-        protected override void UpdateParameters(IDbCommand cmd, Item entity)
-        {
-            SqlParameter p1 = new SqlParameter("@id", entity.Number);
-            SqlParameter p2 = new SqlParameter("@name", entity.Name);
-            SqlParameter p3 = new SqlParameter("@sex", entity.Sex);
-            SqlParameter p4 = new SqlParameter("@dateBirth", entity.DateOfBirth);
-            SqlParameter p5 = new SqlParameter("@country", entity.HomeCountry == null ? null : entity.HomeCountry.Id);
-            p1.Direction = ParameterDirection.InputOutput;
-
-            cmd.Parameters.Add(p1);
-            cmd.Parameters.Add(p2);
-            cmd.Parameters.Add(p3);
-            cmd.Parameters.Add(p4);
-            cmd.Parameters.Add(p5);
+            int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, DEL_CMD, new[] { id });
+            return res != 1 ? null : new ItemProxy(item, ctx);
         }
     }
 }

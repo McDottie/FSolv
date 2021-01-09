@@ -15,6 +15,7 @@ using FSolv;
 using FSolv.model;
 using System.Data;
 using System.Collections.Generic;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -33,7 +34,7 @@ namespace FSolv.mapper.concrete
             context = ctx;
         }
 
-        public override Fatura Fatura
+        public override IFatura Fatura
         {
             get
             {
@@ -51,7 +52,7 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override NotaCredito NotaCredito
+        public override INotaCredito NotaCredito
         {
             get
             {
@@ -69,7 +70,7 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override Product Product
+        public override IProduto Product
         {
             get
             {

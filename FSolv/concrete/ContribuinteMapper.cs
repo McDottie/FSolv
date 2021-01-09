@@ -18,13 +18,14 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System;
 using FSolv.helper;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
     class ContribuinteMapper : IContribuinteMapper
     {
         #region HELPER METHOD 
-        internal List<Fatura> LoadFaturas(ContribuinteProxy contribuinteProxy)
+        internal List<IFatura> LoadFaturas(ContribuinteProxy contribuinteProxy)
         {
             throw new NotImplementedException();
         }

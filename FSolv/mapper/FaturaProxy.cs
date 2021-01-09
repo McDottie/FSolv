@@ -15,6 +15,7 @@ using FSolv;
 using FSolv.model;
 using System.Data;
 using System.Collections.Generic;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -33,7 +34,7 @@ namespace FSolv.mapper.concrete
             base.Contribuinte = null;
             base.Items = null;        
         }
-        public override List<Item> Items
+        public override List<IItem> Items
         {
             get
             {
@@ -51,7 +52,7 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override Contribuinte Contribuinte
+        public override IContribuinte Contribuinte
         {
             get
             {

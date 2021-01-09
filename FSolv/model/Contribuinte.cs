@@ -12,6 +12,7 @@
 *	nas aulas.
 */
 
+using Interfaces;
 using System.Collections.Generic;
 
 namespace FSolv.model
@@ -22,7 +23,7 @@ namespace FSolv.model
         public virtual int? Nif { get; set; }
         public virtual string Name { get; set; }
         public virtual string Morada { get; set; }
-        public virtual List<Fatura> Faturas { get; set; }
+        public virtual List<IFatura> Faturas { get; set; }
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FSolv.mapper.concrete;
 using FSolv.model;
+using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace FSolv.mapper
 
             base.Faturas = null;
         }
-        public override List<Fatura> Faturas
+        public override List<IFatura> Faturas
         {
             get
             {

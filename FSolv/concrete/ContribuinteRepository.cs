@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 using FSolv.model;
 using FSolv.mapper.concrete;
+using Interfaces;
 
 namespace FSolv.concrete
 {
@@ -27,13 +28,13 @@ namespace FSolv.concrete
             context = ctx;
         }
          
-        public IEnumerable<Contribuinte> Find(System.Func<Contribuinte, bool> criteria)
+        public IEnumerable<IContribuinte> Find(System.Func<IContribuinte, bool> criteria)
         {
             //Implementação muito pouco eficiente!!!!  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<Contribuinte> FindAll()
+        public IEnumerable<IContribuinte> FindAll()
         {
             return new ContribuinteMapper(context).ReadAll();
         }

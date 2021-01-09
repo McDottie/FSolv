@@ -53,6 +53,7 @@
     <Compile Include="concrete\ItemRepository.cs" />
     <Compile Include="concrete\NotaCreditoMapper.cs" />
     <Compile Include="concrete\NotaCreditoRepository.cs" />
+    <Compile Include="concrete\ObjectPool.cs" />
     <Compile Include="concrete\ProductMapper.cs" />
     <Compile Include="concrete\ProductRepository.cs" />
     <Compile Include="dal\IContext.cs" />
@@ -60,9 +61,10 @@
     <Compile Include="dal\IFaturaRepository.cs" />
     <Compile Include="dal\IItemRepository.cs" />
     <Compile Include="dal\INotaCreditoRepository.cs" />
+    <Compile Include="dal\IObjectPool.cs" />
     <Compile Include="dal\IProductRepository.cs" />
     <Compile Include="dal\IRepository.cs" />
-    <Compile Include="mapper\AbstracMapper.cs" />
+    <Compile Include="helper\SQLMapperHelper.cs" />
     <Compile Include="mapper\ContribuinteProxy.cs" />
     <Compile Include="mapper\FaturaProxy.cs" />
     <Compile Include="mapper\IContribuinteMapper.cs" />
@@ -85,6 +87,12 @@
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
     <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{2ccff556-46d3-470b-8e8d-27de1b2a125d}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

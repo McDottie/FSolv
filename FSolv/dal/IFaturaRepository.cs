@@ -12,10 +12,11 @@
 *	nas aulas.
 */
 using FSolv.model;
+using Interfaces;
 
 namespace FSolv
 {
-    public interface IFaturaRepository:IRepository<Fatura>
+    public interface IFaturaRepository:IRepository<IFatura>
     {
     }
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿/*
 *  ISEL-ADEETC-SI2
 *   ND 2014-2020
@@ -15,6 +16,7 @@ using FSolv;
 using FSolv.model;
 using System.Data;
 using System.Collections.Generic;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -33,7 +35,7 @@ namespace FSolv.mapper.concrete
             context = ctx;
         }
 
-        public override Fatura Fatura
+        public override IFatura Fatura
         {
             get
             {
@@ -51,7 +53,7 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override NotaCredito NotaCredito
+        public override INotaCredito NotaCredito
         {
             get
             {
@@ -69,21 +71,21 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override Product Product
+        public override IProduto Produto
         {
             get
             {
-                if (base.Product == null)
+                if (base.Produto == null)
                 {
                     ItemMapper sm = new ItemMapper(context);
-                    base.Product = sm.LoadProduct(this);
+                    base.Produto = sm.LoadProduct(this);
                 }
-                return base.Product;
+                return base.Produto;
             }
 
             set
             {
-                base.Product = value;
+                base.Produto = value;
             }
         }
 

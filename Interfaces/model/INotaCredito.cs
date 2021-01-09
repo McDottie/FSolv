@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FSolv.model
+namespace Interfaces
 {
     public interface INotaCredito
     {
-        int? Id { get; set; }
-        Fatura Fatura { get; set; }
-
-        DateTime DataEmissao { get; set; }
-
+        string Id { get; set; }
+        IFatura Fatura { get; set; }
         string State { get; set; }
 
-        List<Item> Items { get; set; }
+        List<IItem> Items { get; set; }
     }
 }

@@ -12,10 +12,11 @@
 *	nas aulas.
 */
 using FSolv.model;
+using Interfaces;
 
 namespace FSolv
 {
-    public interface IContribuinteRepository: IRepository<Contribuinte>
+    public interface IContribuinteRepository: IRepository<IContribuinte>
     {
     }
 }

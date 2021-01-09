@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FSolv.model
+namespace Interfaces
 {
     public interface IItem
     {
         int? Id { get; set; }
         double Desconto { get; set; }
         int Qnt { get; set; }
-        Product Product { get; set; }
-        Fatura Fatura { get; set; }
-        NotaCredito NotaCredito { get; set; }
+        IProduto Produto { get; set; }
+        IFatura Fatura { get; set; }
+        INotaCredito NotaCredito { get; set; }
     }
 }

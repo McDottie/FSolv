@@ -11,6 +11,7 @@
 *	Eventuais incorrec??es s?o alvo de discuss?o
 *	nas aulas.
 */
+using Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -24,13 +25,13 @@ namespace FSolv.model
         
         public string State { get; set; }
 
-        public virtual Contribuinte Contribuinte { get; set; }
+        public virtual IContribuinte Contribuinte { get; set; }
 
         public double Iva { get; set; }
         
         public double Total { get; set; }
 
-        public virtual List<Item> Items { get; set; }
+        public virtual List<IItem> Items { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FSolv.model
+namespace Interfaces
 {
     public interface IFatura
     {
@@ -13,12 +13,12 @@ namespace FSolv.model
 
         string State { get; set; }
 
-        Contribuinte Contribuinte { get; set; }
+        IContribuinte Contribuinte { get; set; }
 
         double Iva { get; set; }
 
         double Total { get; set; }
 
-        List<Item> Items { get; set; }
+        List<IItem> Items { get; set; }
     }
 }

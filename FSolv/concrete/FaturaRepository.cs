@@ -17,6 +17,7 @@ using System.Linq;
 
 using FSolv.model;
 using FSolv.mapper.concrete;
+using Interfaces;
 
 namespace FSolv.concrete
 {
@@ -27,13 +28,13 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-        public IEnumerable<Fatura> Find(Func<Fatura, bool> criteria)
+        public IEnumerable<IFatura> Find(Func<IFatura, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<Fatura> FindAll()
+        public IEnumerable<IFatura> FindAll()
         {
             return new FaturaMapper(context).ReadAll();
         }

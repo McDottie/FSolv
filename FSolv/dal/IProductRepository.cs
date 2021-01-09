@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FSolv
 {
-    public interface IProductRepository : IRepository<Product>
+    public interface IProductRepository : IRepository<Produto>
     {
     }
 }

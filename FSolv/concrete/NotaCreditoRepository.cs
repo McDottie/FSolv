@@ -4,6 +4,7 @@ using System.Linq;
 
 using FSolv.model;
 using FSolv.mapper.concrete;
+using Interfaces;
 
 namespace FSolv.concrete
 {
@@ -14,13 +15,13 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-        public IEnumerable<NotaCredito> Find(Func<NotaCredito, bool> criteria)
+        public IEnumerable<INotaCredito> Find(Func<INotaCredito, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
             return FindAll().Where(criteria);
         }
 
-        public IEnumerable<NotaCredito> FindAll()
+        public IEnumerable<INotaCredito> FindAll()
         {
             return new NotaCreditoMapper(context).ReadAll();
         }

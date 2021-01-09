@@ -19,6 +19,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System;
 using FSolv.helper;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
@@ -26,7 +27,7 @@ namespace FSolv.mapper.concrete
     class FaturaMapper : IFaturaMapper
     {
         #region HELPER METHODS  
-        internal List<IItem> LoadItems(Fatura entity)
+        internal List<IItem> LoadItems(IFatura entity)
         {
             Mapper<IItem> map = (value) =>
             {
@@ -51,24 +52,23 @@ namespace FSolv.mapper.concrete
             return lst;
         }
 
-        internal IContribuinte LoadContribuinte(Fatura entity)
+        internal IContribuinte LoadContribuinte(IFatura fatura)
         {
             Mapper<IContribuinte> map = (value) =>
             {
                 Contribuinte entity = new Contribuinte();
                 entity.Name = value.GetString(0);
-                entity.Nif = id;
+                entity.Morada = value.GetString(1);
+                entity.Nif = value.GetInt32(2);
                 return new ContribuinteProxy(entity, _ctx);
             };
 
             IContribuinte c;
 
-            SqlParameter p = new SqlParameter("@id", entity.Id);
+            SqlParameter p = new SqlParameter("@id", fatura.Id);
 
             c = SQLMapperHelper.ExecuteMapSingle<IContribuinte>(_ctx.Connection,
-                                  "select id, quantidade, desconto, cod_prod from TP1.Item " +
-                                  "join TP1.Fatura_item on Item.id = Fatura_item.cod_item " +
-                                  "where id_fatura = @id",
+                                  "SELECT name,morada,nif from TP1.Contribuinte JOIN TP1.Fatura where id_fatura = @id",
                                     new[] { p }, map);
 
             return c;
@@ -76,7 +76,7 @@ namespace FSolv.mapper.concrete
         #endregion
 
         private readonly IContext _ctx;
-        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, @id)";
+        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, output @id)";
         private const string SEL_ALL_CMD = "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
         private const string SEL_CMD = SEL_ALL_CMD + "where id=@id";
         private const string UPD_CMD = "exec TP1.alt_estado_fatura (@id, @estado)";

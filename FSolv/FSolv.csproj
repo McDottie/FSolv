@@ -84,7 +84,7 @@
     <Compile Include="model\IProduto.cs" />
     <Compile Include="model\Item.cs" />
     <Compile Include="model\NotaCredito.cs" />
-    <Compile Include="model\Product.cs" />
+    <Compile Include="model\Produto.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
@@ -92,6 +92,12 @@
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
     <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{2ccff556-46d3-470b-8e8d-27de1b2a125d}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

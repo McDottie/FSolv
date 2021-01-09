@@ -4,53 +4,88 @@ using FSolv.model;
 using FSolv.mapper.interfaces;
 using System.Data;
 using FSolv;
+using FSolv.helper;
+using System.Data.SqlClient;
+using Interfaces;
 
 namespace FSolv.mapper.concrete
 {
 
-    class ProductMapper : AbstracMapper<Product, int?, List<Product>>, IProductMapper
+    class ProductMapper : IProductMapper
     {
 
-        public ProductMapper(IContext ctx) : base(ctx) { }
+        public IContext ctx;
+        public ProductMapper(IContext ctx) { this.ctx = ctx; }
 
-        protected override string SelectAllCommandText => throw new System.NotImplementedException();
+        private const string SEL_ALL_CMD = "select sku, descricao, valor, iva from TP1.Produto";
 
-        protected override string SelectCommandText => throw new System.NotImplementedException();
+        private const string SEL_CMD = SEL_ALL_CMD + " where sku=@sku";
 
-        protected override string UpdateCommandText => throw new System.NotImplementedException();
+        private const string UPD_CMD = "update TP1.Produto set valor=@valor where sku=@sku";
 
-        protected override string DeleteCommandText => throw new System.NotImplementedException();
+        private const string DEL_CMD = "delete from TP1.Produto where sku=@sku";
 
-        protected override string InsertCommandText => throw new System.NotImplementedException();
+        private const string INS_CMD = "insert into TP1.Produto(sku, valor, descricao, iva) values(@sku, @valor, @descricao, @iva)";
 
-        protected override void DeleteParameters(IDbCommand command, Product e)
+        public IProduto Create(IProduto product)
         {
-            throw new System.NotImplementedException();
+            SqlParameter sku = new SqlParameter("@sku", product.Sku);
+            SqlParameter valor = new SqlParameter("@valor", product.Valor);
+            SqlParameter descricao = new SqlParameter("@descricao", product.Descricao);
+            SqlParameter iva = new SqlParameter("@iva", product.Iva);
+
+            product.Sku = SQLMapperHelper.ExecuteScalar<int>(ctx.Connection, INS_CMD, new[] { sku, valor, descricao, iva });
+
+            return product;
         }
 
-        protected override void InsertParameters(IDbCommand command, Product e)
+        public IProduto Read(int? id)
         {
-            throw new System.NotImplementedException();
+            SqlParameter sku = new SqlParameter("@sku", id);
+
+            Mapper<IProduto> map = (value) =>
+            {
+                Produto p = new Produto();
+                p.Sku = value.GetInt32(0);
+                p.Descricao = value.GetString(1);
+                p.Valor = value.GetInt32(2);
+                p.Iva = value.GetInt32(3);
+                return p;
+            };
+
+            return SQLMapperHelper.ExecuteMapSingle<IProduto>(ctx.Connection, SEL_CMD, new[] { sku }, map);
         }
 
-        protected override Product Map(IDataRecord record)
+        public List<IProduto> ReadAll()
         {
-            throw new System.NotImplementedException();
+            Mapper<IProduto> map = (value) =>
+            {
+                Produto p = new Produto();
+                p.Sku = value.GetInt32(0);
+                p.Descricao = value.GetString(1);
+                p.Valor = value.GetDouble(2);
+                p.Iva = value.GetDouble(3);
+                return p;
+            };
+
+            return SQLMapperHelper.ExecuteMapSet<IProduto, List<IProduto>>(ctx.Connection, SEL_ALL_CMD, new IDbDataParameter[] { }, map);
         }
 
-        protected override void SelectParameters(IDbCommand command, int? k)
+        public IProduto Update(IProduto product)
         {
-            throw new System.NotImplementedException();
+            SqlParameter sku = new SqlParameter("@sku", product.Sku);
+            SqlParameter valor = new SqlParameter("@valor", product.Valor);
+
+            int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, UPD_CMD, new[] { sku, valor });
+            return res != 1 ? null : product;
         }
 
-        protected override Product UpdateEntityID(IDbCommand cmd, Product e)
+        public IProduto Delete(IProduto product)
         {
-            throw new System.NotImplementedException();
-        }
+            SqlParameter sku = new SqlParameter("@sku", product.Sku);
 
-        protected override void UpdateParameters(IDbCommand command, Product e)
-        {
-            throw new System.NotImplementedException();
+            int res = SQLMapperHelper.ExecuteNonQuery(ctx.Connection, DEL_CMD, new[] { sku });
+            return res != 1 ? null : product;
         }
     }
 }

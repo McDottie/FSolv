@@ -38,46 +38,9 @@ namespace FSolv
 
             using (Context ctx = new Context(connectionString))
             {
+                IContribuinteRepository crepo = ctx.Contribuinte;
 
-                Contribuinte c = new Contribuinte();
-                c.Name = "Maria";
-                c.Morada = "Rua rua n rua";
-
-
-                ContribuinteMapper contribuinteMap = new ContribuinteMapper(ctx);
-/*                c = contribuinteMap.Create(c);
-                Contribuinte c1 = contribuinteMap.Read(c.Nif);
-                Console.WriteLine("Contribuinte: {0}-{1}-{2}", c1.Nif, c1.Name, c1.Morada);
-
-                c1.Name = "Jorge";
-                contribuinteMap.Update(c1);
-                c1 = contribuinteMap.Read(c1.Nif);
-                Console.WriteLine("Country: {0}-{1}-{2}", c1.Nif, c1.Name, c1.Morada);
-
-                Contribuinte c2 = new Contribuinte();
-                c2.Name = "Manuel";
-                contribuinteMap.Create(c2);
-
-                Console.WriteLine("FindAll");
-                foreach (var contribuinte in ctx.Countries.FindAll())
-                {
-                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
-                }
-                Console.WriteLine("Find");
-                foreach (var contribuinte in ctx.Countries.Find(ct => ct.Name.Equals("Portugal")))
-                {
-                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
-                }
-
-                Console.WriteLine("ReadAll");
-                foreach (var contribuinte in contribuinteMap.ReadAll())
-                {
-                    Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
-                    contribuinteMap.Delete(contribuinte);
-                }
-
-            */
-                foreach (var contribuinte in contribuinteMap.ReadAll())
+                foreach (var contribuinte in crepo.FindAll())
                 {
                     Console.WriteLine("Country: {0}-{1}-{2}", contribuinte.Nif, contribuinte.Name, contribuinte.Morada);
                 }

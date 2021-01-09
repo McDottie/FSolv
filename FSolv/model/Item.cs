@@ -13,6 +13,7 @@
 */
 
 using FSolv.model;
+using Interfaces;
 
 namespace FSolv.model
 {
@@ -21,9 +22,9 @@ namespace FSolv.model
         public int? Id { get; set; }
         public double Desconto { get; set; }
         public int Qnt { get; set; }
-        public virtual Product Product { get; set; }
-        public virtual Fatura Fatura { get; set; }
-        public virtual NotaCredito NotaCredito { get; set; }
+        public virtual IProduto Produto { get; set; }
+        public virtual IFatura Fatura { get; set; }
+        public virtual INotaCredito NotaCredito { get; set; }
 
     }
 }

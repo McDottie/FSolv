@@ -65,6 +65,7 @@
     <Compile Include="dal\IProductRepository.cs" />
     <Compile Include="dal\IRepository.cs" />
     <Compile Include="helper\SQLMapperHelper.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="mapper\ContribuinteProxy.cs" />
     <Compile Include="mapper\FaturaProxy.cs" />
     <Compile Include="mapper\IContribuinteMapper.cs" />

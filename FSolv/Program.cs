@@ -30,7 +30,8 @@ namespace FSolv
 
     class Program
     {
-        static void Main(string[] args)
+
+       /* static void Main(string[] args)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 
@@ -130,7 +131,7 @@ namespace FSolv
             }*/
 
             /** TESTAR ITEM*/
-            Console.WriteLine("TESTAR PRODUTO");
+            /*Console.WriteLine("TESTAR PRODUTO");
 
             using (Context ctx = new Context(connectionString))
             {
@@ -145,6 +146,6 @@ namespace FSolv
                     Console.WriteLine("Item: {0}, {1}, {2}, {3}", item.Sku, item.Descricao, item.Iva, item.Valor);
                 }
             }
-        }
+        }*/
     }
 }

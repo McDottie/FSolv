@@ -4,6 +4,7 @@ using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
 
 namespace FSolv
@@ -120,29 +121,104 @@ namespace FSolv
 
 		private static void printResults<T>(IEnumerator<T> results)
 		{
-			PropertyInfo[] properties = typeof(T).GetProperties();
+			IEnumerable<PropertyInfo> properties = typeof(T).GetProperties().Where(x =>
+			{
+				Type type;
+				type = x.PropertyType;
+
+				return !type.FullName.Contains("Interfaces");
+			
+			});
 
 
+			int size = properties.Count();
 
-			while (results.MoveNext()) {
-				T curr = results.Current;
+			int[] formatSizes = new int[size];
+			List<string> attrib;
+			List<string> values;
+			string separator;
+			GetFromatSizesStrings(out attrib, out values, out separator, out formatSizes, properties, results);
+			int fcnt = 0;
 
-				foreach (PropertyInfo pi in properties)
-                {
-					Type type;
-					
-					type = pi.PropertyType;
-                    
-					if (!type.FullName.Contains("Interfaces"))
-                    {
-						Console.Write(pi.Name + " : " + pi.GetValue(curr));
-						Console.Write("  |  ");
-                    }
+			Console.Write(separator);
+			Console.WriteLine();
+
+			foreach (string pi in attrib)
+			{
+				Console.Write(String.Format("{0,-" + formatSizes[fcnt] + "}",
+					String.Format("{0," + ((formatSizes[fcnt] + pi.Length) / 2).ToString() + "}", pi) ) 
+					+ "|");
+				fcnt++;
+			}
+			Console.WriteLine();
+			Console.Write(separator);
+			Console.WriteLine();
+			IEnumerator<string> vls = values.GetEnumerator();
+			bool canMove = vls.MoveNext();
+			while (canMove) {
+
+				string curr = vls.Current;
+				
+				for(int i = 0; i < size; i++)
+				{
+					Console.Write(String.Format("{0,-" + formatSizes[i] + "}", curr) + "|");
+					canMove = vls.MoveNext();
+					curr = vls.Current;
 				}
 				Console.WriteLine();
-            }
+			}
+
+			Console.Write(separator);
+			Console.WriteLine();
 		}
-		private void ListFatura()
+
+        private static void GetFromatSizesStrings<T>(out List<string> attrib,
+													out List<string> values,
+													out string separator,
+													out int[] formatSizes, 
+													IEnumerable<PropertyInfo> properties,
+													IEnumerator<T> results)
+        {
+			int size = properties.Count();
+			formatSizes = new int[size];
+			attrib = new List<string>();
+			values = new List<string>();
+			separator =  null;
+			
+			int cnt = 0;
+
+			foreach (PropertyInfo pi in properties)
+			{
+				attrib.Add(pi.Name);
+				formatSizes[cnt++] = pi.Name.Length;
+			}
+
+
+			while (results.MoveNext())
+			{
+				T curr = results.Current;
+				int ict = 0;
+				foreach (PropertyInfo pi2 in properties)
+				{
+					object value = pi2.GetValue(curr);
+					string v = value == null ? "" : value.ToString();
+
+					if (formatSizes[ict] < v.Length)
+						formatSizes[ict] = v.Length;
+					values.Add(v);
+					ict++;
+				}
+			}
+
+
+			for (int i = 0; i < size; ++i)
+			{
+				separator += new String('-', formatSizes[i]);
+				separator += '+';
+			}
+		}
+
+        private void ListFatura()
 		{
 			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 

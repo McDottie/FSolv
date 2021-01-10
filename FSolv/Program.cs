@@ -153,7 +153,7 @@ namespace FSolv
             int col = dr.FieldCount;
             for (int i = 0; i < col; ++i)
             {
-                Console.Write(dr.GetName(i) + " |");
+                Console.Write(String.Format("{0,-27}",dr.GetName(i)) + " |");
             }
             Console.WriteLine();
             for(int i = 0; i<col; ++i)

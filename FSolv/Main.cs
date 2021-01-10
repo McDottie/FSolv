@@ -1,13 +1,12 @@
 ﻿
 using FSolv;
-using FSolv.concrete;
 using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 
-namespace APADO.NET
+namespace FSolv
 {
 
 
@@ -17,25 +16,41 @@ namespace APADO.NET
 		{
 			Unknown = -1,
 			Exit,
+			List_Contribuinte,
 			List_Fatura,
 			List_Nota_de_Credito,
+			List_Produtos,
 			Register_Fatura,
 			Enrol_Contribuinte,
 			Enrol_Produto,
 			Add_Item_to_Fatura,
 			Add_Item_to_Nota_de_Credito,
 
+
 		}
 		private static App __instance;
+		private Type _contextType;
 		private App()
 		{
 			__dbMethods = new Dictionary<Option, DBMethod>();
+			__dbMethods.Add(Option.List_Contribuinte, ListContribuinte);
 			__dbMethods.Add(Option.List_Fatura, ListFatura);
 			__dbMethods.Add(Option.List_Nota_de_Credito, ListNC);
+			__dbMethods.Add(Option.List_Produtos, ListProdutos);
 			__dbMethods.Add(Option.Enrol_Contribuinte, RegisterStudent);
 			__dbMethods.Add(Option.Enrol_Produto, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Fatura, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, EnrolStudent);
+
+			string path = ConfigurationManager.AppSettings["AssemblyPath"];
+
+			Assembly asm = Assembly.LoadFrom(path);
+			foreach (Type t in asm.GetExportedTypes())
+			{
+				_contextType = t;
+				if (typeof(IContext).IsAssignableFrom(_contextType))
+					break;
+			}
 
 		}
 		public static App Instance
@@ -107,14 +122,23 @@ namespace APADO.NET
 		{
 			PropertyInfo[] properties = typeof(T).GetProperties();
 
+
+
 			while (results.MoveNext()) {
 				T curr = results.Current;
 
 				foreach (PropertyInfo pi in properties)
-					if(!pi.GetGetMethod().IsVirtual)
-						Console.WriteLine(pi.GetValue(curr));
-				
-				
+                {
+					Type type;
+					
+					type = pi.PropertyType;
+                    
+					if (!type.FullName.Contains("Interfaces"))
+                    {
+						Console.Write(pi.Name + " : " + pi.GetValue(curr));
+						Console.Write("  |  ");
+                    }
+				}
 				Console.WriteLine();
             }
 		}
@@ -122,11 +146,22 @@ namespace APADO.NET
 		{
 			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 
-			using (Context ctx = new Context(connectionString))
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IFaturaRepository crepo = ctx.Fatura;
 
 				printResults<IFatura>(crepo.FindAll().GetEnumerator());
+			}
+		}
+		private void ListContribuinte()
+        {
+			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
+			
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType,connectionString))
+			{
+				IContribuinteRepository crepo = ctx.Contribuinte;
+
+				printResults<IContribuinte>(crepo.FindAll().GetEnumerator());
 			}
 		}
 
@@ -134,13 +169,26 @@ namespace APADO.NET
 		{
 			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 
-			using (Context ctx = new Context(connectionString))
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				INotaCreditoRepository crepo = ctx.NotaCredito;
 
 				printResults<INotaCredito>(crepo.FindAll().GetEnumerator());
 			}
 		}
+
+		private void ListProdutos()
+		{
+			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IProductRepository crepo = ctx.Produto;
+
+				printResults<IProduto>(crepo.FindAll().GetEnumerator());
+			}
+		}
+
 		private void RegisterStudent()
 		{
 			//TODO: Implement

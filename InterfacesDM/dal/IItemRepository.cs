@@ -11,7 +11,7 @@
 *	Eventuais incorrecções são alvo de discussão
 *	nas aulas.
 */
-using FSolv.model;
+
 using Interfaces;
 
 namespace FSolv

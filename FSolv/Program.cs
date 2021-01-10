@@ -20,9 +20,7 @@
 */
 using System;
 using System.Configuration;
-using FSolv.concrete;
-using FSolv.model;
-using FSolv.mapper.concrete;
+
 using Interfaces;
 
 namespace FSolv

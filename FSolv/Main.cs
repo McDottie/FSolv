@@ -38,7 +38,7 @@ namespace FSolv
 			__dbMethods.Add(Option.List_Fatura, ListFatura);
 			__dbMethods.Add(Option.List_Nota_de_Credito, ListNC);
 			__dbMethods.Add(Option.List_Produtos, ListProdutos);
-			__dbMethods.Add(Option.Enrol_Contribuinte, RegisterStudent);
+			__dbMethods.Add(Option.Enrol_Contribuinte, RegisterContribuinte);
 			__dbMethods.Add(Option.Enrol_Produto, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Fatura, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, EnrolStudent);
@@ -265,12 +265,37 @@ namespace FSolv
 			}
 		}
 
-		private void RegisterStudent()
+		private void RegisterContribuinte()
 		{
-			//TODO: Implement
-			Console.WriteLine("RegisterStudent()");
+			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
+			
+			List<string> questions = new List<string>();
+			questions.Add("Coloque o Nif do Contribuinte");
+			questions.Add("Coloque o Nome completo do contribuinte");
+			questions.Add("Coloque a sua morada (dê ENTER se não pretender adicionar uma)");
+
+			List<string> inputs = QuestionRotine(questions);
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IContribuinteRepository crepo = ctx.Contribuinte;
+				printResults<IContribuinte>(crepo.FindAll().GetEnumerator());
+
+			}
 		}
-		private void EnrolStudent()
+
+        private List<string> QuestionRotine(List<string> questions)
+        {
+			List<string> result = new List<string>();
+            foreach(string question in questions)
+            {
+				Console.WriteLine(question);
+				result.Add(Console.ReadLine());
+            }
+			return result;
+        }
+
+        private void EnrolStudent()
 		{
 			//TODO: Implement
 			Console.WriteLine("EnrolStudent()");

@@ -9,8 +9,8 @@ namespace Interfaces
     public interface IItem
     {
         int? Id { get; set; }
-        decimal Desconto { get; set; }
-        int Qnt { get; set; }
+        Nullable<decimal> Desconto { get; set; }
+        Nullable<int> Qnt { get; set; }
         IProduto Produto { get; set; }
         IFatura Fatura { get; set; }
         INotaCredito NotaCredito { get; set; }

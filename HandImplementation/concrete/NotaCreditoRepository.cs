@@ -15,6 +15,17 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
+
+        public void Add(INotaCredito entity)
+        {
+            new NotaCreditoMapper(context).Create(entity);
+        }
+
+        public void Delete(INotaCredito entity)
+        {
+            new NotaCreditoMapper(context).Delete(entity);
+        }
+
         public IEnumerable<INotaCredito> Find(Func<INotaCredito, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
@@ -24,6 +35,15 @@ namespace FSolv.concrete
         public IEnumerable<INotaCredito> FindAll()
         {
             return new NotaCreditoMapper(context).ReadAll();
+        }
+
+        public void Save()
+        {
+        }
+
+        public void Update(INotaCredito entity)
+        {
+            new NotaCreditoMapper(context).Update(entity);
         }
     }
 }

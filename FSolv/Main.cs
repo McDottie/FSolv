@@ -26,11 +26,14 @@ namespace FSolv
 			Enrol_Produto,
 			Add_Item_to_Fatura,
 			Add_Item_to_Nota_de_Credito,
-
-
 		}
+
 		private static App __instance;
 		private Type _contextType;
+		private Dictionary<Type, Type> modelTypeHolder;
+		private Dictionary<Type, IEnumerable<PropertyInfo>> propertyInfoCache;
+
+		string connectionString;
 		private App()
 		{
 			__dbMethods = new Dictionary<Option, DBMethod>();
@@ -42,15 +45,22 @@ namespace FSolv
 			__dbMethods.Add(Option.Enrol_Produto, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Fatura, EnrolStudent);
 			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, EnrolStudent);
+			
+			modelTypeHolder = new Dictionary<Type, Type>();
+			propertyInfoCache = new Dictionary<Type, IEnumerable<PropertyInfo>>();
 
+			connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 			string path = ConfigurationManager.AppSettings["AssemblyPath"];
 
 			Assembly asm = Assembly.LoadFrom(path);
 			foreach (Type t in asm.GetExportedTypes())
 			{
-				_contextType = t;
-				if (typeof(IContext).IsAssignableFrom(_contextType))
-					break;
+				if (typeof(IContext).IsAssignableFrom(t))
+					_contextType = t;
+
+				Type[] itfs = t.GetInterfaces();
+				if(itfs.Length > 0 && !modelTypeHolder.ContainsKey(itfs[0]))
+					modelTypeHolder.Add(itfs[0], t);
 			}
 
 		}
@@ -70,7 +80,7 @@ namespace FSolv
 			Option option = Option.Unknown;
 			try
 			{
-				Console.WriteLine("Course management");
+				Console.WriteLine("FSolv management");
 				Console.WriteLine();
 				int i = 0;
 				foreach(Option opt in Enum.GetValues(typeof(Option)))
@@ -119,16 +129,26 @@ namespace FSolv
 			} while (userInput != Option.Exit);
 		}
 
-		private static void printResults<T>(IEnumerator<T> results)
+		private void printResults<T>(IEnumerator<T> results)
 		{
-			IEnumerable<PropertyInfo> properties = typeof(T).GetProperties().Where(x =>
-			{
-				Type type;
-				type = x.PropertyType;
+			IEnumerable<PropertyInfo> properties;
 
-				return !type.FullName.Contains("Interfaces");
-			
-			});
+			if (propertyInfoCache.ContainsKey(typeof(T)))
+            {
+				properties = propertyInfoCache[typeof(T)];
+			}
+			else 
+			{
+				properties = typeof(T).GetProperties().Where(x =>
+				 {
+					 Type type;
+					 type = x.PropertyType;
+
+					return !type.FullName.Contains("Interfaces");
+
+				});
+				propertyInfoCache.Add(typeof(T),properties);
+			}
 
 
 			int size = properties.Count();
@@ -142,7 +162,7 @@ namespace FSolv
 
 			Console.Write(separator);
 			Console.WriteLine();
-
+			Console.Write('|');
 			foreach (string pi in attrib)
 			{
 				Console.Write(String.Format("{0,-" + formatSizes[fcnt] + "}",
@@ -158,8 +178,9 @@ namespace FSolv
 			while (canMove) {
 
 				string curr = vls.Current;
-				
-				for(int i = 0; i < size; i++)
+
+				Console.Write('|');
+				for (int i = 0; i < size; i++)
 				{
 					Console.Write(String.Format("{0,-" + formatSizes[i] + "}", curr) + "|");
 					canMove = vls.MoveNext();
@@ -183,7 +204,7 @@ namespace FSolv
 			formatSizes = new int[size];
 			attrib = new List<string>();
 			values = new List<string>();
-			separator =  null;
+			separator =  "+";
 			
 			int cnt = 0;
 
@@ -220,8 +241,7 @@ namespace FSolv
 
         private void ListFatura()
 		{
-			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
-
+			
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IFaturaRepository crepo = ctx.Fatura;
@@ -231,7 +251,6 @@ namespace FSolv
 		}
 		private void ListContribuinte()
         {
-			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 			
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType,connectionString))
 			{
@@ -243,8 +262,7 @@ namespace FSolv
 
 		private void ListNC()
 		{
-			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
-
+			
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				INotaCreditoRepository crepo = ctx.NotaCredito;
@@ -255,8 +273,7 @@ namespace FSolv
 
 		private void ListProdutos()
 		{
-			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
-
+			
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IProductRepository crepo = ctx.Produto;
@@ -267,18 +284,24 @@ namespace FSolv
 
 		private void RegisterContribuinte()
 		{
-			string connectionString = ConfigurationManager.ConnectionStrings["FSolv"].ConnectionString;
 			
 			List<string> questions = new List<string>();
 			questions.Add("Coloque o Nif do Contribuinte");
 			questions.Add("Coloque o Nome completo do contribuinte");
 			questions.Add("Coloque a sua morada (dê ENTER se não pretender adicionar uma)");
 
-			List<string> inputs = QuestionRotine(questions);
+			string[] inputs = QuestionRotine(questions).ToArray();
 
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IContribuinteRepository crepo = ctx.Contribuinte;
+				IContribuinte newContr = (IContribuinte)Activator.CreateInstance(modelTypeHolder[typeof(IContribuinte)]);
+
+				newContr.Nif = long.Parse(inputs[0]);
+				newContr.Name = inputs[1];
+				newContr.Morada = inputs[2];
+
+				crepo.Add(newContr);
 				printResults<IContribuinte>(crepo.FindAll().GetEnumerator());
 
 			}

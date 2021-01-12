@@ -15,6 +15,17 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
+
+        public void Add(IProduto entity)
+        {
+          new ProductMapper(context).Create(entity);
+        }
+
+        public void Delete(IProduto entity)
+        {
+            new ProductMapper(context).Delete(entity);
+        }
+
         public IEnumerable<IProduto> Find(Func<IProduto, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
@@ -24,6 +35,15 @@ namespace FSolv.concrete
         public IEnumerable<IProduto> FindAll()
         {
             return new ProductMapper(context).ReadAll();
+        }
+
+        public void Save()
+        {
+        }
+
+        public void Update(IProduto entity)
+        {
+            new ProductMapper(context).Update(entity);
         }
     }
 }

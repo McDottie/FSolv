@@ -27,6 +27,17 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
+
+        public void Add(IItem entity)
+        {
+            new ItemMapper(context).Create(entity);
+        }
+
+        public void Delete(IItem entity)
+        {
+            new ItemMapper(context).Delete(entity);
+        }
+
         public IEnumerable<IItem> Find(Func<IItem, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
@@ -38,5 +49,13 @@ namespace FSolv.concrete
             return new ItemMapper(context).ReadAll();
         }
 
+        public void Update(IItem entity)
+        {
+            new ItemMapper(context).Update(entity);
+        }
+
+        public void Save()
+        {
+        }
     }
 }

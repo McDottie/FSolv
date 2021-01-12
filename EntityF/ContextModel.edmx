@@ -1,0 +1,666 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="masterModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Alteracao_Fatura">
+          <Key>
+            <PropertyRef Name="id_fatura" />
+            <PropertyRef Name="dt_alteracao" />
+          </Key>
+          <Property Name="id_fatura" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="estado_anterior" Type="varchar" MaxLength="16" />
+          <Property Name="estado_atual" Type="varchar" MaxLength="16" />
+          <Property Name="dt_alteracao" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="code">
+          <Key>
+            <PropertyRef Name="codigo" />
+            <PropertyRef Name="dt_criacao" />
+            <PropertyRef Name="fat" />
+          </Key>
+          <Property Name="codigo" Type="bigint" Nullable="false" />
+          <Property Name="dt_criacao" Type="datetime" Nullable="false" />
+          <Property Name="fat" Type="bit" Nullable="false" />
+          <Property Name="id" Type="varchar" MaxLength="12" />
+        </EntityType>
+        <EntityType Name="Contribuinte">
+          <Key>
+            <PropertyRef Name="nif" />
+          </Key>
+          <Property Name="nif" Type="bigint" Nullable="false" />
+          <Property Name="nome" Type="varchar" MaxLength="30" />
+          <Property Name="morada" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Fatura">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="nif" Type="bigint" />
+          <Property Name="dt_emissao" Type="datetime" />
+          <Property Name="estado" Type="varchar" MaxLength="16" />
+          <Property Name="iva" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="valor_total" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Fatura_item">
+          <Key>
+            <PropertyRef Name="id_fatura" />
+            <PropertyRef Name="cod_item" />
+          </Key>
+          <Property Name="id_fatura" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="cod_item" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="quantidade" Type="int" />
+          <Property Name="desconto" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="cod_prod" Type="int" />
+        </EntityType>
+        <EntityType Name="NC_item">
+          <Key>
+            <PropertyRef Name="id_nc" />
+            <PropertyRef Name="cod_item" />
+          </Key>
+          <Property Name="id_nc" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="cod_item" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Nota_Credito">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="16" />
+          <Property Name="id_fatura" Type="varchar" MaxLength="12" />
+        </EntityType>
+        <EntityType Name="Produto">
+          <Key>
+            <PropertyRef Name="sku" />
+          </Key>
+          <Property Name="sku" Type="int" Nullable="false" />
+          <Property Name="iva" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="descricao" Type="varchar" MaxLength="250" />
+          <Property Name="valor" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'master.TP1.fatura_contribuinte' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="fatura_contribuinte">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="nif" />
+          </Key>
+          <Property Name="id" Type="varchar" MaxLength="12" Nullable="false" />
+          <Property Name="valor_total" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="estado" Type="varchar" MaxLength="16" />
+          <Property Name="nif" Type="bigint" Nullable="false" />
+          <Property Name="nome" Type="varchar" MaxLength="30" />
+          <Property Name="morada" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <Association Name="FK__Alteracao__id_fa__1D072A30">
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="1" />
+          <End Role="Alteracao_Fatura" Type="Self.Alteracao_Fatura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fatura">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Alteracao_Fatura">
+              <PropertyRef Name="id_fatura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Fatura__nif__080C0D4A">
+          <End Role="Contribuinte" Type="Self.Contribuinte" Multiplicity="0..1" />
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contribuinte">
+              <PropertyRef Name="nif" />
+            </Principal>
+            <Dependent Role="Fatura">
+              <PropertyRef Name="nif" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Fatura_it__cod_i__15660868">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Fatura_item" Type="Self.Fatura_item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Fatura_item">
+              <PropertyRef Name="cod_item" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Fatura_it__id_fa__1471E42F">
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="1" />
+          <End Role="Fatura_item" Type="Self.Fatura_item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fatura">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Fatura_item">
+              <PropertyRef Name="id_fatura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Item__cod_prod__11957784">
+          <End Role="Produto" Type="Self.Produto" Multiplicity="0..1" />
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Produto">
+              <PropertyRef Name="sku" />
+            </Principal>
+            <Dependent Role="Item">
+              <PropertyRef Name="cod_prod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__NC_item__cod_ite__1936994C">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="NC_item" Type="Self.NC_item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="NC_item">
+              <PropertyRef Name="cod_item" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__NC_item__id_nc__18427513">
+          <End Role="Nota_Credito" Type="Self.Nota_Credito" Multiplicity="1" />
+          <End Role="NC_item" Type="Self.NC_item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Nota_Credito">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="NC_item">
+              <PropertyRef Name="id_nc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Nota_Cred__id_fa__0BDC9E2E">
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="0..1" />
+          <End Role="Nota_Credito" Type="Self.Nota_Credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fatura">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Nota_Credito">
+              <PropertyRef Name="id_fatura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="addItem_Fatura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="cod_fatura" Type="varchar" Mode="In" />
+          <Parameter Name="sku" Type="int" Mode="In" />
+          <Parameter Name="qnt" Type="int" Mode="In" />
+          <Parameter Name="desconto" Type="decimal" Mode="In" />
+          <Parameter Name="id" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="addItem_NC" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="cod_nc" Type="varchar" Mode="In" />
+          <Parameter Name="item" Type="int" Mode="In" />
+          <Parameter Name="qnt" Type="int" Mode="In" />
+        </Function>
+        <Function Name="alt_estado_fatura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="id_fatura" Type="varchar" Mode="In" />
+          <Parameter Name="estado" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="createNCAddItems" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="id_fatura" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="criaNotaCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="id_fatura" Type="varchar" Mode="In" />
+          <Parameter Name="id" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="ListNC" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="year" Type="datetime" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="id" Type="varchar" MaxLength="12" Nullable="false" />
+                <Property Name="estado" Type="varchar" MaxLength="16" />
+                <Property Name="id_fatura" Type="varchar" MaxLength="12" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="makeCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1" ReturnType="bigint">
+          <Parameter Name="fat_or_nc" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="makeID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="fat_or_nc" Type="bit" Mode="In" />
+          <Parameter Name="id" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="p_criaFactura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="TP1">
+          <Parameter Name="nif" Type="int" Mode="In" />
+          <Parameter Name="c_id" Type="varchar" Mode="InOut" />
+        </Function>
+        <EntityContainer Name="masterModelStoreContainer">
+          <EntitySet Name="Alteracao_Fatura" EntityType="Self.Alteracao_Fatura" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="code" EntityType="Self.code" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Contribuinte" EntityType="Self.Contribuinte" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Fatura" EntityType="Self.Fatura" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Fatura_item" EntityType="Self.Fatura_item" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="Self.Item" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="NC_item" EntityType="Self.NC_item" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Nota_Credito" EntityType="Self.Nota_Credito" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="Produto" EntityType="Self.Produto" Schema="TP1" store:Type="Tables" />
+          <EntitySet Name="fatura_contribuinte" EntityType="Self.fatura_contribuinte" store:Type="Views" store:Schema="TP1">
+            <DefiningQuery>SELECT 
+    [fatura_contribuinte].[id] AS [id], 
+    [fatura_contribuinte].[valor_total] AS [valor_total], 
+    [fatura_contribuinte].[estado] AS [estado], 
+    [fatura_contribuinte].[nif] AS [nif], 
+    [fatura_contribuinte].[nome] AS [nome], 
+    [fatura_contribuinte].[morada] AS [morada]
+    FROM [TP1].[fatura_contribuinte] AS [fatura_contribuinte]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__Alteracao__id_fa__1D072A30" Association="Self.FK__Alteracao__id_fa__1D072A30">
+            <End Role="Fatura" EntitySet="Fatura" />
+            <End Role="Alteracao_Fatura" EntitySet="Alteracao_Fatura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Fatura__nif__080C0D4A" Association="Self.FK__Fatura__nif__080C0D4A">
+            <End Role="Contribuinte" EntitySet="Contribuinte" />
+            <End Role="Fatura" EntitySet="Fatura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Fatura_it__cod_i__15660868" Association="Self.FK__Fatura_it__cod_i__15660868">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Fatura_item" EntitySet="Fatura_item" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Fatura_it__id_fa__1471E42F" Association="Self.FK__Fatura_it__id_fa__1471E42F">
+            <End Role="Fatura" EntitySet="Fatura" />
+            <End Role="Fatura_item" EntitySet="Fatura_item" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Item__cod_prod__11957784" Association="Self.FK__Item__cod_prod__11957784">
+            <End Role="Produto" EntitySet="Produto" />
+            <End Role="Item" EntitySet="Item" />
+          </AssociationSet>
+          <AssociationSet Name="FK__NC_item__cod_ite__1936994C" Association="Self.FK__NC_item__cod_ite__1936994C">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="NC_item" EntitySet="NC_item" />
+          </AssociationSet>
+          <AssociationSet Name="FK__NC_item__id_nc__18427513" Association="Self.FK__NC_item__id_nc__18427513">
+            <End Role="Nota_Credito" EntitySet="Nota_Credito" />
+            <End Role="NC_item" EntitySet="NC_item" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Nota_Cred__id_fa__0BDC9E2E" Association="Self.FK__Nota_Cred__id_fa__0BDC9E2E">
+            <End Role="Fatura" EntitySet="Fatura" />
+            <End Role="Nota_Credito" EntitySet="Nota_Credito" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="masterModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <ComplexType Name="ListNC_Result">
+          <Property Name="id" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="id_fatura" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+        </ComplexType>
+        <EntityType Name="Alteracao_Fatura">
+          <Key>
+            <PropertyRef Name="id_fatura" />
+            <PropertyRef Name="dt_alteracao" />
+          </Key>
+          <Property Name="id_fatura" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="estado_anterior" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="estado_atual" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="dt_alteracao" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Fatura" Relationship="Self.FK__Alteracao__id_fa__1D072A30" FromRole="Alteracao_Fatura" ToRole="Fatura" />
+        </EntityType>
+        <EntityType Name="code">
+          <Key>
+            <PropertyRef Name="codigo" />
+            <PropertyRef Name="dt_criacao" />
+            <PropertyRef Name="fat" />
+          </Key>
+          <Property Name="codigo" Type="Int64" Nullable="false" />
+          <Property Name="dt_criacao" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="fat" Type="Boolean" Nullable="false" />
+          <Property Name="id" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Contribuinte">
+          <Key>
+            <PropertyRef Name="nif" />
+          </Key>
+          <Property Name="nif" Type="Int64" Nullable="false" />
+          <Property Name="nome" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="morada" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Faturas" Relationship="Self.FK__Fatura__nif__080C0D4A" FromRole="Contribuinte" ToRole="Fatura" />
+        </EntityType>
+        <EntityType Name="Fatura">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nif" Type="Int64" />
+          <Property Name="dt_emissao" Type="DateTime" Precision="3" />
+          <Property Name="estado" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="iva" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="valor_total" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Alteracao_Fatura" Relationship="Self.FK__Alteracao__id_fa__1D072A30" FromRole="Fatura" ToRole="Alteracao_Fatura" />
+          <NavigationProperty Name="Contribuinte" Relationship="Self.FK__Fatura__nif__080C0D4A" FromRole="Fatura" ToRole="Contribuinte" />
+          <NavigationProperty Name="Nota_Credito" Relationship="Self.FK__Nota_Cred__id_fa__0BDC9E2E" FromRole="Fatura" ToRole="Nota_Credito" />
+          <NavigationProperty Name="Items" Relationship="Self.Fatura_item" FromRole="Fatura" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="quantidade" Type="Int32" />
+          <Property Name="desconto" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="cod_prod" Type="Int32" />
+          <NavigationProperty Name="Produto" Relationship="Self.FK__Item__cod_prod__11957784" FromRole="Item" ToRole="Produto" />
+          <NavigationProperty Name="Faturas" Relationship="Self.Fatura_item" FromRole="Item" ToRole="Fatura" />
+          <NavigationProperty Name="Nota_Credito" Relationship="Self.NC_item" FromRole="Item" ToRole="Nota_Credito" />
+        </EntityType>
+        <EntityType Name="Nota_Credito">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="id_fatura" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Fatura" Relationship="Self.FK__Nota_Cred__id_fa__0BDC9E2E" FromRole="Nota_Credito" ToRole="Fatura" />
+          <NavigationProperty Name="Items" Relationship="Self.NC_item" FromRole="Nota_Credito" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="Produto">
+          <Key>
+            <PropertyRef Name="sku" />
+          </Key>
+          <Property Name="sku" Type="Int32" Nullable="false" />
+          <Property Name="iva" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="descricao" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="valor" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Items" Relationship="Self.FK__Item__cod_prod__11957784" FromRole="Produto" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="fatura_contribuinte">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="nif" />
+          </Key>
+          <Property Name="id" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="valor_total" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="estado" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="nif" Type="Int64" Nullable="false" />
+          <Property Name="nome" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="morada" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK__Alteracao__id_fa__1D072A30">
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="1" />
+          <End Role="Alteracao_Fatura" Type="Self.Alteracao_Fatura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fatura">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Alteracao_Fatura">
+              <PropertyRef Name="id_fatura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Fatura__nif__080C0D4A">
+          <End Role="Contribuinte" Type="Self.Contribuinte" Multiplicity="0..1" />
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contribuinte">
+              <PropertyRef Name="nif" />
+            </Principal>
+            <Dependent Role="Fatura">
+              <PropertyRef Name="nif" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Nota_Cred__id_fa__0BDC9E2E">
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="0..1" />
+          <End Role="Nota_Credito" Type="Self.Nota_Credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fatura">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Nota_Credito">
+              <PropertyRef Name="id_fatura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Item__cod_prod__11957784">
+          <End Role="Produto" Type="Self.Produto" Multiplicity="0..1" />
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Produto">
+              <PropertyRef Name="sku" />
+            </Principal>
+            <Dependent Role="Item">
+              <PropertyRef Name="cod_prod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Fatura_item">
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <End Role="Fatura" Type="Self.Fatura" Multiplicity="*" />
+        </Association>
+        <Association Name="NC_item">
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <End Role="Nota_Credito" Type="Self.Nota_Credito" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="masterEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Alteracao_Fatura" EntityType="Self.Alteracao_Fatura" />
+          <EntitySet Name="codes" EntityType="Self.code" />
+          <EntitySet Name="Contribuintes" EntityType="Self.Contribuinte" />
+          <EntitySet Name="Faturas" EntityType="Self.Fatura" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="Nota_Credito" EntityType="Self.Nota_Credito" />
+          <EntitySet Name="Produtoes" EntityType="Self.Produto" />
+          <EntitySet Name="fatura_contribuinte" EntityType="Self.fatura_contribuinte" />
+          <AssociationSet Name="FK__Alteracao__id_fa__1D072A30" Association="Self.FK__Alteracao__id_fa__1D072A30">
+            <End Role="Fatura" EntitySet="Faturas" />
+            <End Role="Alteracao_Fatura" EntitySet="Alteracao_Fatura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Fatura__nif__080C0D4A" Association="Self.FK__Fatura__nif__080C0D4A">
+            <End Role="Contribuinte" EntitySet="Contribuintes" />
+            <End Role="Fatura" EntitySet="Faturas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Nota_Cred__id_fa__0BDC9E2E" Association="Self.FK__Nota_Cred__id_fa__0BDC9E2E">
+            <End Role="Fatura" EntitySet="Faturas" />
+            <End Role="Nota_Credito" EntitySet="Nota_Credito" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Item__cod_prod__11957784" Association="Self.FK__Item__cod_prod__11957784">
+            <End Role="Produto" EntitySet="Produtoes" />
+            <End Role="Item" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="Fatura_item" Association="Self.Fatura_item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Fatura" EntitySet="Faturas" />
+          </AssociationSet>
+          <AssociationSet Name="NC_item" Association="Self.NC_item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Nota_Credito" EntitySet="Nota_Credito" />
+          </AssociationSet>
+          <FunctionImport Name="ListNC" IsComposable="true" ReturnType="Collection(masterModel.ListNC_Result)">
+            <Parameter Name="year" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="addItem_Fatura">
+            <Parameter Name="cod_fatura" Mode="In" Type="String" />
+            <Parameter Name="sku" Mode="In" Type="Int32" />
+            <Parameter Name="qnt" Mode="In" Type="Int32" />
+            <Parameter Name="desconto" Mode="In" Type="Decimal" />
+            <Parameter Name="id" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="addItem_NC">
+            <Parameter Name="cod_nc" Mode="In" Type="String" />
+            <Parameter Name="item" Mode="In" Type="Int32" />
+            <Parameter Name="qnt" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="alt_estado_fatura">
+            <Parameter Name="id_fatura" Mode="In" Type="String" />
+            <Parameter Name="estado" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="createNCAddItems">
+            <Parameter Name="id_fatura" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="criaNotaCredito">
+            <Parameter Name="id_fatura" Mode="In" Type="String" />
+            <Parameter Name="id" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="makeID">
+            <Parameter Name="fat_or_nc" Mode="In" Type="Boolean" />
+            <Parameter Name="id" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="p_criaFactura">
+            <Parameter Name="nif" Mode="In" Type="Int32" />
+            <Parameter Name="c_id" Mode="InOut" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="masterModelStoreContainer" CdmEntityContainer="masterEntities">
+          <EntitySetMapping Name="Alteracao_Fatura">
+            <EntityTypeMapping TypeName="masterModel.Alteracao_Fatura">
+              <MappingFragment StoreEntitySet="Alteracao_Fatura">
+                <ScalarProperty Name="id_fatura" ColumnName="id_fatura" />
+                <ScalarProperty Name="estado_anterior" ColumnName="estado_anterior" />
+                <ScalarProperty Name="estado_atual" ColumnName="estado_atual" />
+                <ScalarProperty Name="dt_alteracao" ColumnName="dt_alteracao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="codes">
+            <EntityTypeMapping TypeName="masterModel.code">
+              <MappingFragment StoreEntitySet="code">
+                <ScalarProperty Name="codigo" ColumnName="codigo" />
+                <ScalarProperty Name="dt_criacao" ColumnName="dt_criacao" />
+                <ScalarProperty Name="fat" ColumnName="fat" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contribuintes">
+            <EntityTypeMapping TypeName="masterModel.Contribuinte">
+              <MappingFragment StoreEntitySet="Contribuinte">
+                <ScalarProperty Name="nif" ColumnName="nif" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="morada" ColumnName="morada" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Faturas">
+            <EntityTypeMapping TypeName="masterModel.Fatura">
+              <MappingFragment StoreEntitySet="Fatura">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="nif" ColumnName="nif" />
+                <ScalarProperty Name="dt_emissao" ColumnName="dt_emissao" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="iva" ColumnName="iva" />
+                <ScalarProperty Name="valor_total" ColumnName="valor_total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="masterModel.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="quantidade" ColumnName="quantidade" />
+                <ScalarProperty Name="desconto" ColumnName="desconto" />
+                <ScalarProperty Name="cod_prod" ColumnName="cod_prod" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Nota_Credito">
+            <EntityTypeMapping TypeName="masterModel.Nota_Credito">
+              <MappingFragment StoreEntitySet="Nota_Credito">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="id_fatura" ColumnName="id_fatura" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Produtoes">
+            <EntityTypeMapping TypeName="masterModel.Produto">
+              <MappingFragment StoreEntitySet="Produto">
+                <ScalarProperty Name="sku" ColumnName="sku" />
+                <ScalarProperty Name="iva" ColumnName="iva" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="fatura_contribuinte">
+            <EntityTypeMapping TypeName="masterModel.fatura_contribuinte">
+              <MappingFragment StoreEntitySet="fatura_contribuinte">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="valor_total" ColumnName="valor_total" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="nif" ColumnName="nif" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="morada" ColumnName="morada" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Fatura_item" TypeName="masterModel.Fatura_item" StoreEntitySet="Fatura_item">
+            <EndProperty Name="Item">
+              <ScalarProperty Name="id" ColumnName="cod_item" />
+            </EndProperty>
+            <EndProperty Name="Fatura">
+              <ScalarProperty Name="id" ColumnName="id_fatura" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="NC_item" TypeName="masterModel.NC_item" StoreEntitySet="NC_item">
+            <EndProperty Name="Item">
+              <ScalarProperty Name="id" ColumnName="cod_item" />
+            </EndProperty>
+            <EndProperty Name="Nota_Credito">
+              <ScalarProperty Name="id" ColumnName="id_nc" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionName="masterModel.Store.ListNC" FunctionImportName="ListNC">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="masterModel.ListNC_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="id_fatura" ColumnName="id_fatura" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="addItem_Fatura" FunctionName="masterModel.Store.addItem_Fatura" />
+          <FunctionImportMapping FunctionImportName="addItem_NC" FunctionName="masterModel.Store.addItem_NC" />
+          <FunctionImportMapping FunctionImportName="alt_estado_fatura" FunctionName="masterModel.Store.alt_estado_fatura" />
+          <FunctionImportMapping FunctionImportName="createNCAddItems" FunctionName="masterModel.Store.createNCAddItems" />
+          <FunctionImportMapping FunctionImportName="criaNotaCredito" FunctionName="masterModel.Store.criaNotaCredito" />
+          <FunctionImportMapping FunctionImportName="makeID" FunctionName="masterModel.Store.makeID" />
+          <FunctionImportMapping FunctionImportName="p_criaFactura" FunctionName="masterModel.Store.p_criaFactura" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

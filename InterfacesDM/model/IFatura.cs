@@ -9,15 +9,15 @@ namespace Interfaces
     public interface IFatura
     {
         string Id { get; set; }
-        DateTime DataEmissao { get; set; }
+        Nullable<DateTime> DataEmissao { get; set; }
 
         string State { get; set; }
 
         IContribuinte Contribuinte { get; set; }
 
-        decimal Iva { get; set; }
+        Nullable<decimal> Iva { get; set; }
 
-        decimal Total { get; set; }
+        Nullable<decimal> Total { get; set; }
 
         List<IItem> Items { get; set; }
     }

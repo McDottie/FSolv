@@ -66,12 +66,13 @@ namespace FSolv.mapper.concrete
 
         public IContribuinte Create(IContribuinte entity)
         {
-            SqlParameter p1 = new SqlParameter("@Morada", entity.Morada);
+            SqlParameter p1 = new SqlParameter("@Name", entity.Name);
             SqlParameter p2 = new SqlParameter("@Nif", entity.Nif);
+            SqlParameter p3 = new SqlParameter("@Morada", entity.Morada);
             
-            entity.Nif = SQLMapperHelper.ExecuteScalar<int>(_ctx.Connection,
+            SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,
                                                             INS_CMD,
-                                                            new[] { p1, p2 });
+                                                            new[] { p1, p2, p3 });
             return new ContribuinteProxy(entity,_ctx);
         }
 

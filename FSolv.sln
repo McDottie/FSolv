@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandImplementation", "HandI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfacesDM", "InterfacesDM\InterfacesDM.csproj", "{6B0D0038-1DE9-40B2-8324-FC2F61354FFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityF", "EntityF\EntityF.csproj", "{5FA06105-EF35-49E9-AD9C-C3EEF2E78CF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6B0D0038-1DE9-40B2-8324-FC2F61354FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B0D0038-1DE9-40B2-8324-FC2F61354FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B0D0038-1DE9-40B2-8324-FC2F61354FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA06105-EF35-49E9-AD9C-C3EEF2E78CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA06105-EF35-49E9-AD9C-C3EEF2E78CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA06105-EF35-49E9-AD9C-C3EEF2E78CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA06105-EF35-49E9-AD9C-C3EEF2E78CF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

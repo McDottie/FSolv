@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bc5a001b39ba4486b17e5d049bb1ae06" Name="Diagram1">
+        <EntityTypeShape EntityType="masterModel.Alteracao_Fatura" Width="1.5" PointX="7.5" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.code" Width="1.5" PointX="0.75" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.Contribuinte" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.Fatura" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.Item" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.Nota_Credito" Width="1.5" PointX="7.5" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.Produto" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="masterModel.fatura_contribuinte" Width="1.5" PointX="2.75" PointY="7.125" IsExpanded="true" />
+        <AssociationConnector Association="masterModel.FK__Alteracao__id_fa__1D072A30" ManuallyRouted="false" />
+        <AssociationConnector Association="masterModel.FK__Fatura__nif__080C0D4A" ManuallyRouted="false" />
+        <AssociationConnector Association="masterModel.FK__Nota_Cred__id_fa__0BDC9E2E" ManuallyRouted="false" />
+        <AssociationConnector Association="masterModel.FK__Item__cod_prod__11957784" ManuallyRouted="false" />
+        <AssociationConnector Association="masterModel.Fatura_item" ManuallyRouted="false" />
+        <AssociationConnector Association="masterModel.NC_item" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

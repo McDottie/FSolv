@@ -28,7 +28,6 @@ namespace FSolv.helper
                 {
                     cmd.CommandText = cmdtxt;
                     cmd.Parameters.AddRange(dbDataParameters);
-                    //con.Open();
                     return cmd.ExecuteNonQuery();
                 }
         }
@@ -40,7 +39,8 @@ namespace FSolv.helper
                 {
                     cmd.CommandText = cmdtxt;
                     cmd.Parameters.AddRange(dbDataParameters);
-                    //con.Open();
+                    if (con.State != ConnectionState.Open)
+                        con.Open();
                     return (T)cmd.ExecuteScalar();
                 }
             
@@ -50,9 +50,10 @@ namespace FSolv.helper
         {
             using (SqlCommand cmd = con.CreateCommand())
             {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                //con.Open();
                 var reader = cmd.ExecuteReader();
                 reader.Read();
                 return map.Invoke(reader);
@@ -66,7 +67,8 @@ namespace FSolv.helper
             {
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                //con.Open();
+                if (con.State != ConnectionState.Open)
+                    con.Open();
 
                 TCol list = new TCol(); 
                 SqlDataReader sdr = cmd.ExecuteReader();

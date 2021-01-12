@@ -8,8 +8,8 @@ namespace FSolv.model
     public class Produto : IProduto
     {
         public int? Sku { get; set; }
-        public decimal Valor { get; set; }
-        public decimal Iva { get; set; }
+        public Nullable<decimal> Valor { get; set; }
+        public Nullable<decimal> Iva { get; set; }
         public string Descricao { get; set; }
     }
 }

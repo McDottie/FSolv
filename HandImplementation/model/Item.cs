@@ -14,14 +14,15 @@
 
 using FSolv.model;
 using Interfaces;
+using System;
 
 namespace FSolv.model
 {
     public class Item : IItem
     {
         public int? Id { get; set; }
-        public decimal Desconto { get; set; }
-        public int Qnt { get; set; }
+        public Nullable<decimal> Desconto { get; set; }
+        public Nullable<int> Qnt { get; set; }
         public virtual IProduto Produto { get; set; }
         public virtual IFatura Fatura { get; set; }
         public virtual INotaCredito NotaCredito { get; set; }

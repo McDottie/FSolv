@@ -20,5 +20,10 @@ namespace FSolv
     {
         IEnumerable<T> FindAll();//Possíveis Problemas de desempenho!!!
         IEnumerable<T> Find(System.Func<T, bool> criteria);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        void Save();
+
     }
 }

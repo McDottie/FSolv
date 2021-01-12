@@ -28,6 +28,17 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
+
+        public void Add(IFatura entity)
+        {
+            new FaturaMapper(context).Create(entity);
+        }
+
+        public void Delete(IFatura entity)
+        {
+            new FaturaMapper(context).Delete(entity);
+        }
+
         public IEnumerable<IFatura> Find(Func<IFatura, bool> criteria)
         {
             //Implementação muito pouco eficiente.  
@@ -38,5 +49,15 @@ namespace FSolv.concrete
         {
             return new FaturaMapper(context).ReadAll();
         }
+
+        public void Update(IFatura entity)
+        {
+            new FaturaMapper(context).Update(entity);
+        }
+
+        public void Save()
+        {
+        }
+
     }
 }

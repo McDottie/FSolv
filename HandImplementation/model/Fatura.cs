@@ -21,15 +21,15 @@ namespace FSolv.model
     public class Fatura : IFatura
     {
         public string Id { get; set; }
-        public DateTime DataEmissao { get; set; }
+        public Nullable<DateTime> DataEmissao { get; set; }
         
         public string State { get; set; }
 
         public virtual IContribuinte Contribuinte { get; set; }
 
-        public decimal Iva { get; set; }
+        public Nullable<decimal> Iva { get; set; }
         
-        public decimal Total { get; set; }
+        public Nullable<decimal> Total { get; set; }
 
         public virtual List<IItem> Items { get; set; }
 

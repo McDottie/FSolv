@@ -9,8 +9,8 @@ namespace Interfaces
     public interface IProduto
     {
         int? Sku { get; set; }
-        decimal Valor { get; set; }
-        decimal Iva { get; set; }
+        Nullable<decimal> Valor { get; set; }
+        Nullable<decimal> Iva { get; set; }
         string Descricao { get; set; }
     }
 }

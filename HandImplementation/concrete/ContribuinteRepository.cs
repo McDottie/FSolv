@@ -27,7 +27,12 @@ namespace FSolv.concrete
         {
             context = ctx;
         }
-         
+
+        public void Add(IContribuinte entity)
+        {
+            new ContribuinteMapper(context).Create(entity);
+        }
+
         public IEnumerable<IContribuinte> Find(System.Func<IContribuinte, bool> criteria)
         {
             //Implementação muito pouco eficiente!!!!  
@@ -38,6 +43,18 @@ namespace FSolv.concrete
         {
             return new ContribuinteMapper(context).ReadAll();
         }
+        public void Update(IContribuinte entity)
+        {
+            new ContribuinteMapper(context).Update(entity);
+        }
+        public void Delete(IContribuinte entity)
+        {
+            new ContribuinteMapper(context).Delete(entity);
+        }
 
+        public void Save()
+        {
+
+        }
     }
 }

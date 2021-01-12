@@ -10,34 +10,42 @@ namespace EntityF.implementations.context
 {
     class ItemRepository : IItemRepository
     {
+        private masterEntities entities;
+
+        public ItemRepository(masterEntities entities) {
+            this.entities = entities;
+        }
+
         public void Add(IItem entity)
         {
-            throw new NotImplementedException();
+            entities.Items.Add((Item) entity);
         }
 
         public void Delete(IItem entity)
         {
-            throw new NotImplementedException();
+            entities.Items.Remove((Item) entity);
         }
 
         public IEnumerable<IItem> Find(Func<IItem, bool> criteria)
         {
-            throw new NotImplementedException();
+            return entities.Items.Where(criteria);
         }
 
         public IEnumerable<IItem> FindAll()
         {
-            throw new NotImplementedException();
+            return entities.Items.ToList();
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            entities.SaveChanges();
         }
 
         public void Update(IItem entity)
         {
-            throw new NotImplementedException();
+            IItem item = entities.Items.Where(i => i.Id == entity.Id).SingleOrDefault();
+            item.Desconto = entity.Desconto;
+            item.Qnt = entity.Qnt;
         }
     }
 }

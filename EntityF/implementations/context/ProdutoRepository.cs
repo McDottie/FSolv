@@ -10,34 +10,43 @@ namespace EntityF.implementations.context
 {
     class ProdutoRepository : IProductRepository
     {
+        private masterEntities entities;
+
+        public ProdutoRepository(masterEntities entities) 
+        {
+            this.entities = entities;
+        }
         public void Add(IProduto entity)
         {
-            throw new NotImplementedException();
+            entities.Produtoes.Add((Produto)entity);
         }
 
         public void Delete(IProduto entity)
         {
-            throw new NotImplementedException();
+            entities.Produtoes.Remove((Produto)entity);
         }
 
         public IEnumerable<IProduto> Find(Func<IProduto, bool> criteria)
         {
-            throw new NotImplementedException();
+            return entities.Produtoes.Where(criteria);
         }
 
         public IEnumerable<IProduto> FindAll()
         {
-            throw new NotImplementedException();
+            return entities.Produtoes.ToList();
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            entities.Produtoes.SaveChanges();
         }
 
         public void Update(IProduto entity)
         {
-            throw new NotImplementedException();
+            IProduto produto = entities.Produtoes.Where(p => p.Sku == entity.Sku).SingleOrDefault();
+            produto.Valor = entity.Valor;
+            produto.Descricao = entity.Descricao;
+            produto.Iva = entity.Iva;
         }
     }
 }

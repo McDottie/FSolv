@@ -8,36 +8,44 @@ using System.Threading.Tasks;
 
 namespace EntityF.implementations.context
 {
-    class NotaCreditoRepository : INotaCreditoRepository
+    public class NotaCreditoRepository : INotaCreditoRepository
     {
+        private masterEntities entitys;
+
+        public NotaCreditoRepository(masterEntities entitys) 
+        {
+            this.entitys = entitys;
+        }
         public void Add(INotaCredito entity)
         {
-            throw new NotImplementedException();
+            entitys.Nota_Credito.Add((Nota_Credito) entity);
         }
 
         public void Delete(INotaCredito entity)
         {
-            throw new NotImplementedException();
+            entitys.Nota_Credito.Remove((Nota_Credito) entity);
         }
 
         public IEnumerable<INotaCredito> Find(Func<INotaCredito, bool> criteria)
         {
-            throw new NotImplementedException();
+            return entitys.Nota_Credito.Where(criteria);
         }
 
         public IEnumerable<INotaCredito> FindAll()
         {
-            throw new NotImplementedException();
+            return entitys.Nota_Credito.ToList();
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            entitys.SaveChanges();
         }
 
         public void Update(INotaCredito entity)
         {
-            throw new NotImplementedException();
+            INotaCredito nc = entitys.Nota_Credito.Where(n => n.Id == entity.Id).SingleOrDefault();
+            nc.State = entity.State;
+            nc.Items = entity.Items;
         }
     }
 }

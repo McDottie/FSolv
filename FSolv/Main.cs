@@ -29,6 +29,7 @@ namespace FSolv
 			Add_Item_to_Fatura,
 			Add_Item_to_Nota_de_Credito,
 			Update_Estado_da_Fatura,
+			Exchange_Nif_Entre_Faturas,
 			Emitir_Fatura_Adicionando_Items,
 
 			Test_Efficiency
@@ -56,6 +57,7 @@ namespace FSolv
 			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, AddItemToNC);
 			__dbMethods.Add(Option.Update_Estado_da_Fatura, UpdateStateFatura);
 			__dbMethods.Add(Option.Emitir_Fatura_Adicionando_Items, EmitirAddCriarFatura);
+			__dbMethods.Add(Option.Exchange_Nif_Entre_Faturas, ExchangeNifs);
 			__dbMethods.Add(Option.Test_Efficiency, TestEfficiency);
 
 			modelTypeHolder = new Dictionary<Type, Type>();
@@ -513,7 +515,23 @@ namespace FSolv
 				}
 			}
 		}
+		private void ExchangeNifs()
+		{
+			List<string> questions = new List<string>();
+			questions.Add("Coloque o Id da primeria Fatura");
+			questions.Add("Coloque o Id da segunda Fatura");
 
+			string[] inputs = QuestionRoutine(questions).ToArray();
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IFaturaRepository crepo = ctx.Fatura;
+				IFatura fatura1 = crepo.Find(f => f.Id == inputs[0]).SingleOrDefault();
+				IFatura fatura2 = crepo.Find(f => f.Id == inputs[1]).SingleOrDefault();
+
+				crepo.ExchangeNif(fatura1, fatura2);
+				crepo.Save();
+			}
+		}
 		private List<string> QuestionRoutine(List<string> questions)
         {
 			List<string> result = new List<string>();

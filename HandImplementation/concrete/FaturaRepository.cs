@@ -64,5 +64,10 @@ namespace FSolv.concrete
         {
             new FaturaMapper(context).addItem(fatura,item);
         }
+
+        public void ExchangeNif(IFatura fatura1, IFatura fatura2)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

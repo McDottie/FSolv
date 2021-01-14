@@ -58,6 +58,16 @@ namespace EntityF.implementations.context
             return true;
         }
 
+        public void ExchangeNif(IFatura fatura1, IFatura fatura2)
+        {
+            Fatura f1 = entitys.Faturas.Where(f => f.id == fatura1.Id).SingleOrDefault();
+            Fatura f2 = entitys.Faturas.Where(f => f.id == fatura2.Id).SingleOrDefault();
+
+            long? c1 = f1.nif;
+            long? c2 = f2.nif;
+            f1.nif = c2;
+            f2.nif = c1;
+        }
         public void Update(IFatura entity)
         {
             Fatura ftc = entitys.Faturas.Where(fc => fc.id == entity.Id).SingleOrDefault();

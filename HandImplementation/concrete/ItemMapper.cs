@@ -114,7 +114,7 @@ namespace FSolv.mapper.concrete
             } else
             {
                 SqlParameter cod_ft = new SqlParameter("@cod_fatura", item.Fatura.Id);
-                SqlParameter cod_prod = new SqlParameter("@cod_prod", item.Produto.Sku);
+                SqlParameter cod_prod = new SqlParameter("@cod_prod", item.ProdutoI.Sku);
                 SqlParameter quantidade = new SqlParameter("@quantidade", item.Qnt);
                 SqlParameter desconto = new SqlParameter("@desconto", item.Desconto);
                 SqlParameter id = new SqlParameter("@id", SqlDbType.Int);

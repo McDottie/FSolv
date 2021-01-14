@@ -37,8 +37,9 @@ namespace FSolv.concrete
             return new ProductMapper(context).ReadAll();
         }
 
-        public void Save()
+        public bool Save()
         {
+            return true;
         }
 
         public void Update(IProduto entity)

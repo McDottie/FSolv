@@ -75,41 +75,42 @@ namespace FSolv.mapper.concrete
             return c;
         }
         #endregion
-
+        private object monitor;
         private readonly IContext _ctx;
-        private const string INS_CMD = "exec TP1.p_criaFactura (@nif, output @id)";
+        private const string INS_CMD = "insert into TP1.Fatura (id, nif, dt_emissao, estado) values (@id,@nif,getdate(),'Em atualizacao')";
+        //private const string INS_CMD = "exec TP1.p_criaFactura @nif, @id output";
         private const string SEL_ALL_CMD = "select id,dt_emissao,estado,iva,valor_total from TP1.Fatura";
         private const string SEL_CMD = SEL_ALL_CMD + "where id=@id";
-        private const string UPD_CMD = "exec TP1.alt_estado_fatura (@id, @estado)";
+        private const string UPD_CMD = "exec TP1.alt_estado_fatura @id, @estado";
         private const string DEL_CMD = "delete from TP1.Fatura where id=@id";
+        private const string ADD_ITEM = "exec  TP1.addItem_Fatura @id, @sku, @qnt, @desconto, @item_id output";
 
         public FaturaMapper(IContext ctx)
         {
             _ctx = ctx;
-
+            monitor = new object();
         }
 
         public IFatura Create(IFatura entity)
         {
-            SqlParameter p1 = new SqlParameter("@id", SqlDbType.VarChar);
+            string id = CreateId();
+            SqlParameter p1 = new SqlParameter("@id", id);
             SqlParameter p2 = new SqlParameter("@nif", entity.Contribuinte.Nif);
+            //SqlParameter p2 = new SqlParameter("@id", SqlDbType.VarChar,12);
+            //p2.Direction = ParameterDirection.Output;
 
-            p1.Direction = ParameterDirection.Output;
-            if (entity.Id != null)
-                p1.Value = entity.Id;
-            else
-                p1.Value = DBNull.Value;
 
-            entity.Id = SQLMapperHelper.ExecuteScalar<string>(_ctx.Connection,
+            SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,
                                                             INS_CMD,
                                                             new[] { p1, p2 });
+            entity.Id = id;
             return new FaturaProxy(entity, _ctx);
         }
 
         public IFatura Update(IFatura entity)
         {
             SqlParameter p = new SqlParameter("@id", entity.Id);
-            SqlParameter p1 = new SqlParameter("@nif", entity.State);
+            SqlParameter p1 = new SqlParameter("@estado", entity.State);
 
             int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, UPD_CMD, new[] { p, p1 });
             return i != 1 ? null : new FaturaProxy(entity, _ctx);
@@ -147,10 +148,13 @@ namespace FSolv.mapper.concrete
             {
                 Fatura c = new Fatura();
                 c.Id = value.GetString(0);
-                c.DataEmissao = value.GetDateTime(1);
+                if (!value.IsDBNull(1))
+                    c.DataEmissao = value.GetDateTime(1);
                 c.State = value.GetString(2);
-                c.Iva = value.GetDecimal(3);
-                c.Total = value.GetDecimal(4);
+                if(!value.IsDBNull(3))
+                    c.Iva = value.GetDecimal(3);
+                if (!value.IsDBNull(4))
+                    c.Total = value.GetDecimal(4);
                 c.Contribuinte = null;
                 c.Items = null;
 
@@ -170,6 +174,41 @@ namespace FSolv.mapper.concrete
 
             int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, DEL_CMD, new[] { p });
             return i != 1 ? null : new FaturaProxy(entity, _ctx);
+        }
+
+        public IItem addItem(IFatura fatura, IItem item)
+        {
+            SqlParameter p1 = new SqlParameter("@id", fatura.Id);
+            SqlParameter p2 = new SqlParameter("@sku", item.ProdutoI.Sku);
+            SqlParameter p3 = new SqlParameter("@qnt", item.Qnt);
+            SqlParameter p4 = new SqlParameter("@Desconto", item.Desconto);
+            SqlParameter p5 = new SqlParameter("@item_id", SqlDbType.Int);
+
+            p5.Direction = ParameterDirection.Output;
+
+
+            SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,
+                                                            ADD_ITEM,
+                                                            new[] { p1, p2, p3, p4, p5 });
+            item.Id = (int)p5.Value;
+            return new ItemProxy(item, _ctx);
+        }
+
+        public string CreateId()
+        {
+            string createdCode = "";
+            lock (monitor)
+            {
+                int code = 0;
+                foreach (IFatura fatura in this.ReadAll())
+                {
+                    int curr = Convert.ToInt32(fatura.Id.Substring(7));
+                    code = code > curr ? code : curr + 1;
+                }
+
+                createdCode = "FT" + DateTime.Now.Year + "-" + String.Format("{0,0:D5}", code);
+            }
+            return createdCode;
         }
     }
 }

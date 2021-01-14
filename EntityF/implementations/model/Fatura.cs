@@ -14,7 +14,7 @@ namespace EntityF
         public string State { get => this.estado; set => this.estado = value; }
         public Nullable<decimal> Iva { get => this.iva; set => this.iva = value; }
         public Nullable<decimal> Total { get => this.valor_total; set => this.valor_total = value; }
-        IContribuinte IFatura.Contribuinte { get => this.Contribuinte; set => throw new NotImplementedException(); }
+        IContribuinte IFatura.Contribuinte { get => this.Contribuinte; set => this.Contribuinte = (Contribuinte)value; }
         List<IItem> IFatura.Items { get => this.Items.ToList<IItem>(); set => throw new NotImplementedException(); }
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="implementations\model\Contribuinte.cs" />
     <Compile Include="implementations\model\Fatura.cs" />
     <Compile Include="implementations\model\Item.cs" />
+    <Compile Include="implementations\model\ListNC_Result.cs" />
     <Compile Include="implementations\model\Nota_Credito.cs" />
     <Compile Include="implementations\model\Produto.cs" />
     <Compile Include="Item.cs">

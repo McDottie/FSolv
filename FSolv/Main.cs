@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
+using System.Transactions;
 
 namespace FSolv
 {
@@ -13,7 +14,7 @@ namespace FSolv
 
 	class App
 	{
-		private enum Option
+		public enum Option
 		{
 			Unknown = -1,
 			Exit,
@@ -21,31 +22,42 @@ namespace FSolv
 			List_Fatura,
 			List_Nota_de_Credito,
 			List_Produtos,
+			List_Nota_de_Credito_de_Determinado_Ano,
 			Register_Fatura,
+			Register_Nota_de_Credito,
 			Enrol_Contribuinte,
-			Enrol_Produto,
 			Add_Item_to_Fatura,
 			Add_Item_to_Nota_de_Credito,
+			Update_Estado_da_Fatura,
+			Emitir_Fatura_Adicionando_Items,
+
+			Test_Efficiency
 		}
 
 		private static App __instance;
-		private Type _contextType;
-		private Dictionary<Type, Type> modelTypeHolder;
+		public Type _contextType;
+		public Dictionary<Type, Type> modelTypeHolder;
 		private Dictionary<Type, IEnumerable<PropertyInfo>> propertyInfoCache;
 
-		string connectionString;
+		public string connectionString;
 		private App()
 		{
+
 			__dbMethods = new Dictionary<Option, DBMethod>();
-			__dbMethods.Add(Option.List_Contribuinte, ListContribuinte);
+            __dbMethods.Add(Option.List_Contribuinte, ListContribuinte);
 			__dbMethods.Add(Option.List_Fatura, ListFatura);
 			__dbMethods.Add(Option.List_Nota_de_Credito, ListNC);
 			__dbMethods.Add(Option.List_Produtos, ListProdutos);
+			__dbMethods.Add(Option.List_Nota_de_Credito_de_Determinado_Ano, listNCByYear);
+			__dbMethods.Add(Option.Register_Fatura, Registerfatura);
+			__dbMethods.Add(Option.Register_Nota_de_Credito, RegisterNC);
 			__dbMethods.Add(Option.Enrol_Contribuinte, RegisterContribuinte);
-			__dbMethods.Add(Option.Enrol_Produto, EnrolStudent);
-			__dbMethods.Add(Option.Add_Item_to_Fatura, EnrolStudent);
-			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, EnrolStudent);
-			
+			__dbMethods.Add(Option.Add_Item_to_Fatura, AddItemToFatura);
+			__dbMethods.Add(Option.Add_Item_to_Nota_de_Credito, AddItemToNC);
+			__dbMethods.Add(Option.Update_Estado_da_Fatura, UpdateStateFatura);
+			__dbMethods.Add(Option.Emitir_Fatura_Adicionando_Items, EmitirAddCriarFatura);
+			__dbMethods.Add(Option.Test_Efficiency, TestEfficiency);
+
 			modelTypeHolder = new Dictionary<Type, Type>();
 			propertyInfoCache = new Dictionary<Type, IEnumerable<PropertyInfo>>();
 
@@ -64,7 +76,15 @@ namespace FSolv
 			}
 
 		}
-		public static App Instance
+
+        private void TestEfficiency()
+        {
+			Tester tester = new Tester(__instance);
+			tester.TestEfficiency();
+
+		}
+
+        public static App Instance
 		{
 			get
 			{
@@ -83,12 +103,16 @@ namespace FSolv
 				Console.WriteLine("FSolv management");
 				Console.WriteLine();
 				int i = 0;
-				foreach(Option opt in Enum.GetValues(typeof(Option)))
-                {
+				foreach (Option opt in Enum.GetValues(typeof(Option)))
+				{
 					if (opt != option)
-						Console.WriteLine(i++ + ". " + opt.ToString().Replace('_',' '));
+					{
+						Console.WriteLine(i++ + ". " + opt.ToString().Replace('_', ' '));
+					}
 				}
-				var result = Console.ReadLine();
+
+				string result = Console.ReadLine();
+
 				option = (Option)Enum.Parse(typeof(Option), result);
 			}
 			catch (ArgumentException ex)
@@ -99,9 +123,9 @@ namespace FSolv
 			return option;
 
 		}
-		
-		private delegate void DBMethod();
-		private System.Collections.Generic.Dictionary<Option, DBMethod> __dbMethods;
+
+		public delegate void DBMethod();
+		public System.Collections.Generic.Dictionary<Option, DBMethod> __dbMethods;
 		public string ConnectionString
 		{
 			get;
@@ -241,7 +265,9 @@ namespace FSolv
 
         private void ListFatura()
 		{
-			
+			Console.WriteLine("Faturas");
+			Console.WriteLine();
+
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IFaturaRepository crepo = ctx.Fatura;
@@ -251,7 +277,9 @@ namespace FSolv
 		}
 		private void ListContribuinte()
         {
-			
+			Console.WriteLine("Contribuintes");
+			Console.WriteLine();
+
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType,connectionString))
 			{
 				IContribuinteRepository crepo = ctx.Contribuinte;
@@ -262,7 +290,9 @@ namespace FSolv
 
 		private void ListNC()
 		{
-			
+			Console.WriteLine("Notas de Credito");
+			Console.WriteLine();
+
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				INotaCreditoRepository crepo = ctx.NotaCredito;
@@ -273,12 +303,28 @@ namespace FSolv
 
 		private void ListProdutos()
 		{
-			
+			Console.WriteLine("Produtos");
+			Console.WriteLine();
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
 				IProductRepository crepo = ctx.Produto;
 
 				printResults<IProduto>(crepo.FindAll().GetEnumerator());
+			}
+		}
+
+		private void listNCByYear()
+        {
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				INotaCreditoRepository crepo = ctx.NotaCredito;
+				List<string> questions = new List<string>();
+				questions.Add("Que ano pretende ver");
+
+				string[] inputs = QuestionRoutine(questions).ToArray();
+
+				printResults<INotaCredito>(crepo.ListNCFromYear(new DateTime(Convert.ToInt32(inputs[0]),1,1)).GetEnumerator());
 			}
 		}
 
@@ -290,7 +336,7 @@ namespace FSolv
 			questions.Add("Coloque o Nome completo do contribuinte");
 			questions.Add("Coloque a sua morada (dê ENTER se não pretender adicionar uma)");
 
-			string[] inputs = QuestionRotine(questions).ToArray();
+			string[] inputs = QuestionRoutine(questions).ToArray();
 
 			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
 			{
@@ -302,12 +348,173 @@ namespace FSolv
 				newContr.Morada = inputs[2];
 
 				crepo.Add(newContr);
+				crepo.Save();
 				printResults<IContribuinte>(crepo.FindAll().GetEnumerator());
 
 			}
 		}
+        private void Registerfatura()
+		{
+			List<string> questions = new List<string>();
+			questions.Add("Coloque o Nif do Contribuinte desta Fatura?");
+			
+			string[] inputs = QuestionRoutine(questions).ToArray();
 
-        private List<string> QuestionRotine(List<string> questions)
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IFaturaRepository crepo = ctx.Fatura;
+				IFatura newFatura = (IFatura)Activator.CreateInstance(modelTypeHolder[typeof(IFatura)]);
+
+				newFatura.Contribuinte = (IContribuinte)Activator.CreateInstance(modelTypeHolder[typeof(IContribuinte)]);
+				newFatura.Contribuinte.Nif = long.Parse(inputs[0]);
+				crepo.Add(newFatura);
+				crepo.Save();
+				printResults<IFatura>(crepo.FindAll().GetEnumerator());
+
+			}
+		}
+
+		private void RegisterNC()
+        {
+			List<string> questions = new List<string>();
+			questions.Add("Coloque o Id da Fatura correspondente?");
+
+			string[] inputs = QuestionRoutine(questions).ToArray();
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				INotaCreditoRepository crepo = ctx.NotaCredito;
+				INotaCredito nc = (INotaCredito)Activator.CreateInstance(modelTypeHolder[typeof(INotaCredito)]);
+
+				nc.Fatura = (IFatura)Activator.CreateInstance(modelTypeHolder[typeof(IFatura)]);
+				nc.Fatura.Id = inputs[0];
+				crepo.Add(nc);
+				crepo.Save();
+				printResults<INotaCredito>(crepo.FindAll().GetEnumerator());
+
+			}
+		}
+
+		private void AddItemToFatura()
+        {
+			List<string> questions = new List<string>();
+			questions.Add("Qual o id da Fatura?");
+			questions.Add("Qual o Produto que pretende adicionar à fatura (SKU)?");
+			questions.Add("Qual a quantidade do produto?");
+			questions.Add("Qual o desconto do item?");
+
+			string[] inputs = QuestionRoutine(questions).ToArray();
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IFaturaRepository crepo = ctx.Fatura;
+				IFatura fatura = (IFatura)Activator.CreateInstance(modelTypeHolder[typeof(IFatura)]);
+				IItem item = (IItem)Activator.CreateInstance(modelTypeHolder[typeof(IItem)]);
+				
+				fatura.Id = inputs[0];
+				
+				item.ProdutoI = (IProduto)Activator.CreateInstance(modelTypeHolder[typeof(IProduto)]);
+				item.ProdutoI.Sku = int.Parse(inputs[1]);
+				item.Qnt = Convert.ToInt32(inputs[2]);
+				item.Desconto = Convert.ToDecimal(inputs[3]);
+
+				crepo.AddItemToFatura(fatura,item);
+				crepo.Save();
+				printResults<IFatura>(crepo.FindAll().GetEnumerator());
+
+			}
+		}
+
+		private void AddItemToNC()
+		{
+			List<string> questions = new List<string>();
+			questions.Add("Qual o id da Nota de Credito?");
+			questions.Add("Qual o Item que pretende remover da fatura (id do item)?");
+			questions.Add("Qual a quantidade que pretende retirar?");
+
+			string[] inputs = QuestionRoutine(questions).ToArray();
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				INotaCreditoRepository crepo = ctx.NotaCredito;
+				INotaCredito nc = (INotaCredito)Activator.CreateInstance(modelTypeHolder[typeof(INotaCredito)]);
+				IItem item = (IItem)Activator.CreateInstance(modelTypeHolder[typeof(IItem)]);
+
+				nc.Id = inputs[0];
+				item.Id = Convert.ToInt32(inputs[1]);
+				item.Qnt = Convert.ToInt32(inputs[2]);
+				
+				crepo.AddItemToNC(nc, item);
+				crepo.Save();
+				printResults<INotaCredito>(crepo.FindAll().GetEnumerator());
+
+			}
+		}
+
+        private void UpdateStateFatura()
+        {
+
+			List<string> questions = new List<string>();
+			questions.Add("Qual o id da Fatura?");
+			questions.Add("Para que estado é que quere alterar esta Fatura?");
+
+			string[] inputs = QuestionRoutine(questions).ToArray();
+
+			using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+			{
+				IFaturaRepository crepo = ctx.Fatura;
+
+				IFatura fatura = (IFatura)Activator.CreateInstance(modelTypeHolder[typeof(IFatura)]); ;
+				fatura.Id = inputs[0];
+				fatura.State = inputs[1];
+				crepo.Update(fatura);
+				crepo.Save();
+				printResults<IFatura>(crepo.FindAll().GetEnumerator());
+			}
+		}
+
+		private void EmitirAddCriarFatura()
+        {
+			List<string> questions = new List<string>();
+			questions.Add("Coloque o Nif do Contribuinte desta Fatura?");
+			questions.Add("Qual o Produto que pretende adicionar à fatura (SKU)?");
+			questions.Add("Qual a quantidade do produto?");
+			questions.Add("Qual o desconto do item?");
+
+			string[] inputs = QuestionRoutine(questions).ToArray();
+			using(var ts = new TransactionScope())
+			{
+				using (IContext ctx = (IContext)Activator.CreateInstance(_contextType, connectionString))
+				{
+					IFaturaRepository crepo = ctx.Fatura;
+					IFatura newFatura = (IFatura)Activator.CreateInstance(modelTypeHolder[typeof(IFatura)]);
+
+					newFatura.Contribuinte = (IContribuinte)Activator.CreateInstance(modelTypeHolder[typeof(IContribuinte)]);
+					newFatura.Contribuinte.Nif = long.Parse(inputs[0]);
+					crepo.Add(newFatura);
+					crepo.Save();
+
+					IItem item = (IItem)Activator.CreateInstance(modelTypeHolder[typeof(IItem)]);
+
+					item.ProdutoI = (IProduto)Activator.CreateInstance(modelTypeHolder[typeof(IProduto)]);
+					item.ProdutoI.Sku = int.Parse(inputs[1]);
+					item.Qnt = Convert.ToInt32(inputs[2]);
+					item.Desconto = Convert.ToDecimal(inputs[3]);
+
+					crepo.AddItemToFatura(newFatura, item);
+					crepo.Save();
+
+					newFatura.State = "Emitida";
+					crepo.Update(newFatura);
+					crepo.Save();
+
+					printResults<IFatura>(crepo.FindAll().GetEnumerator());
+					ts.Complete();
+				}
+			}
+		}
+
+		private List<string> QuestionRoutine(List<string> questions)
         {
 			List<string> result = new List<string>();
             foreach(string question in questions)
@@ -318,11 +525,7 @@ namespace FSolv
 			return result;
         }
 
-        private void EnrolStudent()
-		{
-			//TODO: Implement
-			Console.WriteLine("EnrolStudent()");
-		}
+
 
 		}
 class MainClass

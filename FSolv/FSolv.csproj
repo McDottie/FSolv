@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Tester.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\" />

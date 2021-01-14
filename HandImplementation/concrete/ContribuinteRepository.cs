@@ -52,9 +52,9 @@ namespace FSolv.concrete
             new ContribuinteMapper(context).Delete(entity);
         }
 
-        public void Save()
+        public bool Save()
         {
-
+            return true;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +37,16 @@ namespace EntityF.implementations.context
             return entities.Items.ToList();
         }
 
-        public void Save()
+        public bool Save()
         {
-            entities.SaveChanges();
+            try { entities.SaveChanges(); }
+            catch (DbUpdateConcurrencyException e)
+            {
+                e.Entries.Single().Reload();
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         public void Update(IItem entity)

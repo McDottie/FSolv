@@ -18,5 +18,6 @@ namespace FSolv
 {
     public interface IFaturaRepository:IRepository<IFatura>
     {
+        void AddItemToFatura(IFatura fatura, IItem item);
     }
 }

@@ -24,6 +24,7 @@ namespace FSolv.concrete
     public class FaturaRepository : IFaturaRepository
     {
         private IContext context;
+
         public FaturaRepository(IContext ctx)
         {
             context = ctx;
@@ -55,9 +56,13 @@ namespace FSolv.concrete
             new FaturaMapper(context).Update(entity);
         }
 
-        public void Save()
+        public bool Save()
         {
+            return true;
         }
-
+        public void AddItemToFatura(IFatura fatura, IItem item)
+        {
+            new FaturaMapper(context).addItem(fatura,item);
+        }
     }
 }

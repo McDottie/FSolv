@@ -54,8 +54,9 @@ namespace FSolv.concrete
             new ItemMapper(context).Update(entity);
         }
 
-        public void Save()
+        public bool Save()
         {
+            return true;
         }
     }
 }

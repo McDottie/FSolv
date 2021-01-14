@@ -21,6 +21,11 @@ namespace FSolv.concrete
             new NotaCreditoMapper(context).Create(entity);
         }
 
+        public void AddItemToNC(INotaCredito nc, IItem item)
+        {
+            new NotaCreditoMapper(context).addItem(nc, item);
+        }
+
         public void Delete(INotaCredito entity)
         {
             new NotaCreditoMapper(context).Delete(entity);
@@ -37,8 +42,14 @@ namespace FSolv.concrete
             return new NotaCreditoMapper(context).ReadAll();
         }
 
-        public void Save()
+        public IEnumerable<INotaCredito> ListNCFromYear(DateTime dateTime)
         {
+            return new NotaCreditoMapper(context).ListNCFromYear(dateTime);
+        }
+
+        public bool Save()
+        {
+            return true;
         }
 
         public void Update(INotaCredito entity)

@@ -3,6 +3,7 @@ using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,9 +45,16 @@ namespace EntityF.implementations.context
             cb.Morada = entity.Morada;
         }
 
-        public void Save()
+        public bool Save()
         {
-            entitys.SaveChanges();
+            try { entitys.SaveChanges(); }
+            catch (DbUpdateConcurrencyException e)
+            {
+                e.Entries.Single().Reload();
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace FSolv.mapper.concrete
             base.Id = s.Id;
             base.Fatura= null;
             base.NotaCredito = null;
-            base.Produto = null;
+            base.ProdutoI = null;
 
             context = ctx;
         }
@@ -71,21 +71,21 @@ namespace FSolv.mapper.concrete
             }
         }
 
-        public override IProduto Produto
+        public override IProduto ProdutoI
         {
             get
             {
-                if (base.Produto == null)
+                if (base.ProdutoI == null)
                 {
                     ItemMapper sm = new ItemMapper(context);
-                    base.Produto = sm.LoadProduct(this);
+                    base.ProdutoI = sm.LoadProduct(this);
                 }
-                return base.Produto;
+                return base.ProdutoI;
             }
 
             set
             {
-                base.Produto = value;
+                base.ProdutoI = value;
             }
         }
 

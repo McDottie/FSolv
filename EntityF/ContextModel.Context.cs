@@ -124,7 +124,7 @@ namespace EntityF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("makeID", fat_or_ncParameter, id);
         }
     
-        public virtual int p_criaFactura(Nullable<int> nif, ObjectParameter c_id)
+        public virtual int p_criaFactura(Nullable<long> nif, ObjectParameter c_id)
         {
             var nifParameter = nif.HasValue ?
                 new ObjectParameter("nif", nif) :

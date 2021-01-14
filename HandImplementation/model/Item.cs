@@ -23,7 +23,7 @@ namespace FSolv.model
         public int? Id { get; set; }
         public Nullable<decimal> Desconto { get; set; }
         public Nullable<int> Qnt { get; set; }
-        public virtual IProduto Produto { get; set; }
+        public virtual IProduto ProdutoI { get; set; }
         public virtual IFatura Fatura { get; set; }
         public virtual INotaCredito NotaCredito { get; set; }
 

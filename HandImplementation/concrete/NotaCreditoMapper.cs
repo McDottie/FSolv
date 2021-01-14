@@ -63,13 +63,15 @@ namespace FSolv.mapper.concrete
             return lst;
         }
         #endregion
-        
+
         private readonly IContext _ctx;
-        private const string INS_CMD = "exec TP1.criaNotaCredito (@id_fatura, output @id)";
+        private const string INS_CMD = "exec TP1.criaNotaCredito @id_fatura, @id output";
         private const string SEL_ALL_CMD = "select id,estado,id_fatura from TP1.Nota_Credito";
         private const string SEL_CMD = SEL_ALL_CMD + "where id=@id";
         private const string UPD_CMD = "update TP1.Nota_credito set id=@id, estado=@estado, id_fatura=@id_fatura  WHERE id=@id";
         private const string DEL_CMD = "delete from TP1.Nota_Credito where id=@id";
+        private const string ADD_ITEM = "exec  TP1.addItem_NC @cod_nc, @item, @qnt";
+        private const string LIST_NC = "select id,estado,id_fatura from TP1.ListNC(@date)";
 
         public NotaCreditoMapper(IContext ctx)
         {
@@ -79,7 +81,7 @@ namespace FSolv.mapper.concrete
         public INotaCredito Create(INotaCredito entity)
         {
             SqlParameter p1 = new SqlParameter("@id_fatura",entity.Fatura.Id);
-            SqlParameter p2 = new SqlParameter("@id", SqlDbType.VarChar);
+            SqlParameter p2 = new SqlParameter("@id", SqlDbType.VarChar, 12);
 
             p2.Direction = ParameterDirection.Output;
             if(entity.Id != null)
@@ -87,9 +89,10 @@ namespace FSolv.mapper.concrete
             else
                 p2.Value = DBNull.Value;
 
-            entity.Id = SQLMapperHelper.ExecuteScalar<string>(_ctx.Connection,
+            SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,
                                                             INS_CMD,
                                                             new[] { p1, p2 });
+            entity.Id = (string)p2.Value;
             return entity;
 
         }
@@ -153,6 +156,40 @@ namespace FSolv.mapper.concrete
 
             int i = SQLMapperHelper.ExecuteNonQuery(_ctx.Connection, DEL_CMD, new[] { p });
             return i != 1 ? null : new NotaCreditoProxy(entity, _ctx);
+        }
+
+        public void addItem(INotaCredito nc, IItem item)
+        {
+            SqlParameter p1 = new SqlParameter("@cod_nc", nc.Id);
+            SqlParameter p2 = new SqlParameter("@item", item.Id);
+            SqlParameter p3 = new SqlParameter("@qnt", item.Qnt);
+
+            SQLMapperHelper.ExecuteNonQuery(_ctx.Connection,
+                                                            ADD_ITEM,
+                                                            new[] { p1, p2, p3});
+        }
+
+        public IEnumerable<INotaCredito> ListNCFromYear(DateTime dateTime)
+        {
+            SqlParameter p1 = new SqlParameter("@date", dateTime);
+
+            Mapper<INotaCredito> map = (value) =>
+            {
+                NotaCredito c = new NotaCredito();
+                c.Id = value.GetString(0);
+                c.State = value.GetString(1);
+                c.Fatura = null;
+                c.Items = null;
+
+                return new NotaCreditoProxy(c, _ctx);
+            };
+
+            return SQLMapperHelper.ExecuteMapSet<INotaCredito, List<INotaCredito>>(_ctx.Connection,
+                                                    LIST_NC,
+                                                    new IDbDataParameter[] { p1},
+                                                    map
+                                                    );
+
         }
     }
 }
